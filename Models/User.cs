@@ -26,6 +26,10 @@ namespace BoxBox.Models
         public string ProfilePicture { get; set; }
         [Column("TotalPosts")]
         public int TotalPosts { get; set; }
+        [Column("Salt")]
+        public string Salt { get; set; }
+        [Column("Estado")]
+        public string Estado { get; set; }
 
     }
 }

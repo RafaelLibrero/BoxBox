@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using BoxBox.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace BoxBox.Data
 {
@@ -7,6 +8,6 @@ namespace BoxBox.Data
         public BoxBoxContext(DbContextOptions<BoxBoxContext> options)
         :base (options) { }
 
-
+        public DbSet<Forum> forums { get; set; }
     }
 }
