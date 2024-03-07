@@ -9,8 +9,8 @@ namespace BoxBox.Models
         [Key]
         [Column("PostID")]
         public int PostId { get; set; }
-        [Column("ThreadID")]
-        public int ThreadId { get; set; }
+        [Column("ConversationID")]
+        public int ConversationId { get; set; }
         [Column("UserID")]
         public int UserId { get; set; }
         [Column("Text")]

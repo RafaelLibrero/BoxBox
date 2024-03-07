@@ -3,12 +3,16 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BoxBox.Models
 {
-    [Table("Forums")]
-    public class Forum
+    [Table("Conversations")]
+    public class Conversation
     {
         [Key]
-        [Column("ForumID")]
-        public int ForumId { get; set; }
+        [Column("ConversationID")]
+        public int ConversationId { get; set; }
+        [Column("TopicID")]
+        public int TopicId { get; set; }
+        [Column("UserID")]
+        public int UserId { get; set; }
         [Column("Title")]
         public string Title { get; set; }
         [Column("CreatedAt")]

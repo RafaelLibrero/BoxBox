@@ -8,6 +8,9 @@ namespace BoxBox.Data
         public BoxBoxContext(DbContextOptions<BoxBoxContext> options)
         :base (options) { }
 
-        public DbSet<Forum> forums { get; set; }
+        public DbSet<Topic> Topics { get; set; }
+        public DbSet<Conversation> Conversations { get; set; }
+        public DbSet<Post> Posts { get; set; }
+
     }
 }
