@@ -11,6 +11,8 @@ namespace BoxBox.Data
         public DbSet<Topic> Topics { get; set; }
         public DbSet<Conversation> Conversations { get; set; }
         public DbSet<Post> Posts { get; set; }
+        public DbSet<User> Users { get; set; }
+        public DbSet<Driver> Drivers { get; set; }
 
     }
 }

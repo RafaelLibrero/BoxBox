@@ -57,5 +57,31 @@ namespace BoxBox.Repositories
                 (x => x.ConversationId == conversationId)
                 .ToListAsync();
         }
+
+        #endregion
+
+        #region Drivers
+
+        public async Task<List<Driver>> GetDriversAsync()
+        {
+            return await
+                this.context.Drivers.ToListAsync();
+        }
+
+        public async Task CreateDriverAsync(Driver conductor)
+        {
+            Driver driver = new Driver();
+            driver.DriverID = await this.context.Drivers.MaxAsync(x => x.DriverID) + 1;
+            driver.DriverName = conductor.DriverName;
+            driver.CarNumber = conductor.CarNumber;
+            driver.TeamID = conductor.TeamID;
+            driver.Flag = conductor.Flag;
+            driver.Imagen = conductor.Imagen;
+
+            this.context.Drivers.Add(driver);
+            this.context.SaveChanges();
+        }
+
+        #endregion
     }
 }

@@ -1,7 +1,22 @@
+using BoxBox.Data;
+using BoxBox.Helpers;
+using BoxBox.Repositories;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+builder.Services.AddTransient<RepositoryBoxBox>();
+builder.Services.AddTransient<RepositoryAuth>();
+
+string connectionString = builder.Configuration.GetConnectionString("SqlBoxBox");
+
+builder.Services.AddDbContext<BoxBoxContext>
+    (options => options.UseSqlServer(connectionString));
+
+builder.Services.AddSingleton<HelperPathProvider>();
+builder.Services.AddSingleton<HelperUploadFiles>();
 
 var app = builder.Build();
 

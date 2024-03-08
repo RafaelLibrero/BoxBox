@@ -29,7 +29,7 @@ namespace BoxBox.Models
         [Column("Salt")]
         public string Salt { get; set; }
         [Column("Estado")]
-        public string Estado { get; set; }
+        public int Estado { get; set; }
 
     }
 }
