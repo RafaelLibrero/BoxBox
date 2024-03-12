@@ -18,6 +18,8 @@ builder.Services.AddDbContext<BoxBoxContext>
 builder.Services.AddSingleton<HelperPathProvider>();
 builder.Services.AddSingleton<HelperUploadFiles>();
 
+builder.Services.AddSession();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -34,7 +36,7 @@ app.UseStaticFiles();
 app.UseRouting();
 
 app.UseAuthorization();
-
+app.UseSession();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");

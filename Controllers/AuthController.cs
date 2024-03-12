@@ -1,4 +1,5 @@
-﻿using BoxBox.Helpers;
+﻿using BoxBox.Extensions;
+using BoxBox.Helpers;
 using BoxBox.Models;
 using BoxBox.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -9,7 +10,6 @@ namespace BoxBox.Controllers
     {
         private RepositoryAuth repo;
         
-
         public AuthController(RepositoryAuth repo)
         {
             this.repo = repo;
@@ -21,21 +21,33 @@ namespace BoxBox.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Register(User user)
+        public async Task<IActionResult> Register(string userName, string email, string password)
         {
-            user.Salt = HelperCryptography.GenerateSalt();
-            user.Password = HelperCryptography.EncriptarContenido(user.Password, user.Salt);
-            user.RegistrationDate = DateTime.Today;
-            user.LastAccess = DateTime.UtcNow;
-            user.RolId = 2;
-            user.Estado = 0;
-            await this.repo.Register(user);
+            User user = await this.repo.Register(userName, email, password);
+            
             return View();
         }
 
         public IActionResult Login()
         {
             return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Login(string email, string password)
+        {
+            User user = await this.repo.LoginUserAsync(email, password);
+            if (user == null)
+            {
+                ViewData["MENSAJE"] = "Credenciales incorrectas";
+                return View();
+            }
+            else
+            {
+                HttpContext.Session.SetObject("USUARIO", user);
+                ViewData["MENSAJE"] = "Bienvenido";
+                return View();
+            }
         }
     }
 }

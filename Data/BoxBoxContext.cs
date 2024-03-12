@@ -13,6 +13,8 @@ namespace BoxBox.Data
         public DbSet<Post> Posts { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Driver> Drivers { get; set; }
+        public DbSet<Team> Teams { get; set; }
+        public DbSet<Race> Races { get; set; }
 
     }
 }

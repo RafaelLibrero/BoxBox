@@ -10,12 +10,14 @@ namespace BoxBox.Models
         [Key]
         [Column("UserID")]
         public int UserId { get; set; }
+        [Required]
         [Column("UserName")]
         public string UserName { get; set; }
+        [EmailAddress]
         [Column("Email")]
         public string Email { get; set; }
         [Column("Password")]
-        public string Password { get; set; }
+        public byte[] Password { get; set; }
         [Column("RegistrationDate")]
         public DateTime RegistrationDate { get; set; }
         [Column("LastAccess")]

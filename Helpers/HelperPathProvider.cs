@@ -47,5 +47,13 @@ namespace BoxBox.Helpers
             string urlPath = serverUrl + "/" + carpeta + "/" + fileName;
             return urlPath;
         }
+
+        public string MapUrlServerPath()
+        {
+            var addresses =
+                server.Features.Get<IServerAddressesFeature>().Addresses;
+            string serverUrl = addresses.FirstOrDefault();
+            return serverUrl;
+        }
     }
 }
