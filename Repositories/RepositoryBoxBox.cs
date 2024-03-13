@@ -1,6 +1,62 @@
 ﻿using BoxBox.Data;
 using BoxBox.Models;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.EntityFrameworkCore;
+
+#region Views y Stored Procedures
+
+#region Topics
+
+//CREATE VIEW V_Topics AS
+//SELECT
+//    t.TopicID,
+//    t.Title,
+//    t.Description,
+//    COUNT(DISTINCT c.ConversationID) AS Conversations,
+//    COUNT(p.PostID) AS Posts,
+//    COALESCE(MAX(p.PostID), 0) AS LastMessage
+//FROM
+//    topics t
+//LEFT JOIN
+//    conversations c ON t.TopicID = c.TopicID
+//LEFT JOIN
+//    posts p ON c.ConversationID = p.ConversationID
+//GROUP BY
+//    t.TopicID, t.Title, t.Description;
+
+#endregion
+
+#region Conversations
+
+//CREATE VIEW V_Conversations AS
+//SELECT
+//    c.ConversationID,
+//    c.TopicID,
+//    c.UserID,
+//    c.Title,
+//    c.EntryCount,
+//    c.CreatedAt,
+//    COUNT(p.PostID) AS PostCount,
+//    COALESCE(MAX(p.PostID), 0) AS LastMessage
+//FROM
+//    Conversations c
+//LEFT JOIN
+//    Posts p ON c.ConversationID = p.ConversationID
+//GROUP BY
+//    c.ConversationID, c.UserID, c.TopicID, c.Title, c.EntryCount, c.CreatedAt;
+
+//CREATE PROCEDURE SP_UPDATE_ENTRYCOUNT
+//    @ConversationID INT
+//AS
+//BEGIN
+//    UPDATE Conversations
+//    SET EntryCount = EntryCount + 1
+//    WHERE ConversationID = @ConversationID;
+//END;
+
+#endregion
+
+#endregion
 
 namespace BoxBox.Repositories
 {
@@ -12,36 +68,48 @@ namespace BoxBox.Repositories
         {
             this.context = context;
         }
+        #region Users
+
+        public async Task<User> FindUserAsync(int userId)
+        {
+            return await
+                this.context.Users.FirstOrDefaultAsync
+                (x => x.UserId == userId);
+        }
+
+        #endregion
 
         #region Topics
 
-        public async Task<List<Topic>> GetTopicsAsync()
+        public async Task<List<VTopic>> GetVTopicsAsync()
         {
             return await
-                this.context.Topics.ToListAsync();
+                this.context.VTopics.ToListAsync();
         }
 
-        public async Task<Topic> FindTopicAsync(int topicId)
+        public async Task<VTopic> FindVTopicAsync(int topicId)
         {
             return await
-                this.context.Topics.FirstOrDefaultAsync
+                this.context.VTopics.FirstOrDefaultAsync
                 (x => x.TopicId == topicId);
         }
 
-        public async Task CreateTopicAsync(Topic tema)
+        public async Task CreateVTopicAsync(VTopic tema)
         {
-            Topic topic = new Topic();
-            topic.TopicId = await this.context.Topics.MaxAsync(x => x.TopicId) + 1;
+            VTopic topic = new VTopic();
+            topic.TopicId = await this.context.VTopics.MaxAsync(x => x.TopicId) + 1;
             topic.Title = tema.Title;
+            topic.Description = tema.Description;
 
-            this.context.Topics.Add(topic);
+            this.context.VTopics.Add(topic);
             await this.context.SaveChangesAsync();
         }
 
-        public async Task UpdateTopicAsync(Topic tema)
+        public async Task UpdateVTopicAsync(VTopic tema)
         {
-            Topic topic = await this.FindTopicAsync(tema.TopicId);
+            VTopic topic = await this.FindVTopicAsync(tema.TopicId);
             topic.Title = tema.Title;
+            topic.Description = tema.Description;
 
             await this.context.SaveChangesAsync();
         }
@@ -50,36 +118,36 @@ namespace BoxBox.Repositories
 
         #region Conversations
 
-        public async Task<List<Conversation>> GetConversationsForumAsync(int topicId)
+        public async Task<List<VConversation>> GetVConversationsTopicAsync(int topicId)
         {
             return await
-                this.context.Conversations.Where
+                this.context.VConversations.Where
                 (x => x.TopicId == topicId).ToListAsync();
         }
 
-        public async Task<Conversation> FindConversationAsync(int conversationId)
+        public async Task<VConversation> FindVConversationAsync(int conversationId)
         {
             return await
-                this.context.Conversations.FirstOrDefaultAsync
+                this.context.VConversations.FirstOrDefaultAsync
                 (x => x.ConversationId == conversationId);
         }
 
-        public async Task CreateConversationAsync(Conversation conversacion)
+        public async Task CreateVConversationAsync(VConversation conversacion)
         {
-            Conversation conversation = new Conversation();
+            VConversation conversation = new VConversation();
             conversation.ConversationId = await this.context.Conversations.MaxAsync(x => x.ConversationId) + 1;
             conversation.TopicId = conversacion.TopicId;
             conversation.UserId = conversacion.UserId;
             conversation.Title = conversacion.Title;
             conversation.CreatedAt = conversation.CreatedAt;
 
-            this.context.Conversations.Add(conversation);
+            this.context.VConversations.Add(conversation);
             await this.context.SaveChangesAsync();
         }
 
-        public async Task UpdateConversationAsync(Conversation conversacion)
+        public async Task UpdateVConversationAsync(VConversation conversacion)
         {
-            Conversation conversation = await this.FindConversationAsync(conversacion.ConversationId);
+            VConversation conversation = await this.FindVConversationAsync(conversacion.ConversationId);
             conversation.TopicId = conversacion.TopicId;
             conversation.UserId = conversacion.UserId;
             conversation.Title = conversacion.Title;
@@ -87,11 +155,11 @@ namespace BoxBox.Repositories
             await this.context.SaveChangesAsync();
         }
 
-        public async Task DeleteConversationAsync(int conversationId)
+        public async Task DeleteVConversationAsync(int conversationId)
         {
-            Conversation conversation = await this.FindConversationAsync(conversationId);
+            VConversation conversation = await this.FindVConversationAsync(conversationId);
 
-            this.context.Conversations.Remove(conversation);
+            this.context.VConversations.Remove(conversation);
         }
 
         #endregion
@@ -119,6 +187,7 @@ namespace BoxBox.Repositories
             post.PostId = await this.context.Posts.MaxAsync(x => x.PostId) + 1;
             post.ConversationId = posteo.ConversationId;
             post.UserId = posteo.UserId;
+            post.Title = posteo.Title;
             post.Text = posteo.Text;
             post.CreatedAt = posteo.CreatedAt;
 
@@ -131,6 +200,7 @@ namespace BoxBox.Repositories
             Post post = await this.FindPostAsync(posteo.PostId);
             post.ConversationId = posteo.ConversationId;
             post.UserId = posteo.UserId;
+            post.Title = posteo.Title;
             post.Text = posteo.Text;
             post.CreatedAt = posteo.CreatedAt;
 

@@ -3,8 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BoxBox.Models
 {
-    [Table("Topics")]
-    public class Topic
+    [Table("V_Topics")]
+    public class VTopic
     {
         [Key]
         [Column("TopicID")]
@@ -13,5 +13,11 @@ namespace BoxBox.Models
         public string Title { get; set; }
         [Column("Description")]
         public string Description { get; set; }
+        [Column("Conversations")]
+        public int Conversations { get; set; }
+        [Column("Posts")]
+        public int Posts { get; set; }
+        [Column("LastMessage")]
+        public int LastMessage { get; set; }
     }
 }

@@ -1,0 +1,27 @@
+﻿﻿@if (Context.User.Identity.IsAuthenticated == false)
+{
+    //EL USUARIO NO ESTA AUTENTICADO, POR LO QUE 
+    //LE LLEVAMOS A CUALQUIER VISTA PROTEGIDA QUE, 
+    //A SU VEZ, NOS LLEVARA A LOGIN
+    <li class="nav-item">
+        <a asp-controller="Users"
+            asp-action="Perfil"
+            asp-route-userId=""
+            class="nav-link">
+            Log In
+        </a>
+    </li>
+}
+else
+{
+    <li class="nav-link">
+        <a asp-controller="Auth"
+            asp-action="Logout"
+            class="nav-link text-danger">
+            Log out 
+            <span style="color:blue">
+                @Context.User.Identity.Name
+            </span>
+        </a>
+    </li>
+}

@@ -1,0 +1,67 @@
+﻿@model IEnumerable<BoxBox.Models.VTopic>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.TopicId)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Conversations)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Posts)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.LastMessage)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.TopicId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Conversations)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Posts)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.LastMessage)
+            </td>
+            <td>
+                <a asp-controller="Conversations" 
+                asp-action="Index"
+                asp-route-topicId="@item.TopicId">
+                Detalles
+            </a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

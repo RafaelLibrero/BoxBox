@@ -15,6 +15,8 @@ namespace BoxBox.Models
         public int UserId { get; set; }
         [Column("Title")]
         public string Title { get; set; }
+        [Column("EntryCount")]
+        public int EntryCount { get; set; }
         [Column("CreatedAt")]
         public DateTime CreatedAt { get; set; }
     }

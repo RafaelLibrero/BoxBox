@@ -9,7 +9,9 @@ namespace BoxBox.Data
         :base (options) { }
 
         public DbSet<Topic> Topics { get; set; }
+        public DbSet<VTopic> VTopics { get; set; }
         public DbSet<Conversation> Conversations { get; set; }
+        public DbSet<VConversation> VConversations { get; set; }
         public DbSet<Post> Posts { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<Driver> Drivers { get; set; }

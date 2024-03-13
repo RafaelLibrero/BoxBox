@@ -3,22 +3,25 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace BoxBox.Models
 {
-    [Table("Posts")]
-    public class Post
+    [Table("V_Conversations")]
+    public class VConversation
     {
         [Key]
-        [Column("PostID")]
-        public int PostId { get; set; }
         [Column("ConversationID")]
         public int ConversationId { get; set; }
+        [Column("TopicID")]
+        public int TopicId { get; set; }
         [Column("UserID")]
         public int UserId { get; set; }
         [Column("Title")]
         public string Title { get; set; }
-        [Column("Text")]
-        public string Text { get; set; }
+        [Column("EntryCount")]
+        public int EntryCount { get; set; }
         [Column("CreatedAt")]
         public DateTime CreatedAt { get; set; }
-
+        [Column("PostCount")]
+        public int PostCount { get; set; }
+        [Column("LastMessage")]
+        public int LastMessage { get; set; }
     }
 }
