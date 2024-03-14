@@ -2,6 +2,16 @@
 
 @{
     ViewData["Title"] = "Index";
+    List<Post> lastMessages = null;
+    @if (ViewData["LastMessages"] != null)
+    {
+        lastMessages = ViewData["LastMessages"] as List<Post>;
+    }
+    List<User> usuarios = null;
+    @if (ViewData["Usuarios"] != null)
+    {
+        usuarios = ViewData["Usuarios"] as List<User>;
+    }
 }
 
 <h1>Index</h1>
@@ -48,9 +58,24 @@
             <td>
                 @Html.DisplayFor(modelItem => item.TopicId)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.UserId)
-            </td>
+                <td>
+                    @{
+                        if (usuarios != null && item.UserId != 0)
+                        {
+                            var usuario = usuarios.FirstOrDefault(m => m.UserId == item.UserId);
+                            if (usuario != null)
+                            {
+                                <p>@usuario.UserName</p>
+                                <p>Fecha: @usuario.RegistrationDate</p>
+                            }
+                            else
+                            {
+                                <p>No hay mensajes disponibles</p>
+                            }
+                        }
+                    }
+
+                </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
             </td>
@@ -63,9 +88,24 @@
             <td>
                 @Html.DisplayFor(modelItem => item.PostCount)
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.LastMessage)
-            </td>
+                <td>
+                    @{
+                        if (lastMessages != null && item.LastMessage != 0)
+                        {
+                            var lastMessage = lastMessages.FirstOrDefault(m => m.PostId == item.LastMessage);
+                            if (lastMessage != null)
+                            {
+                                <p>Último mensaje: @lastMessage.Text</p>
+                                <p>Fecha: @lastMessage.CreatedAt</p>
+                            }
+                            else
+                            {
+                                <p>No hay mensajes disponibles</p>
+                            }
+                        }
+                    }
+
+                </td>
             <td>
                 <a asp-controller="Posts"
                     asp-action="Index"

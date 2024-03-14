@@ -31,6 +31,8 @@ builder.Services.AddSingleton<HelperUploadFiles>();
 
 builder.Services.AddSession();
 
+builder.Services.AddAntiforgery();
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

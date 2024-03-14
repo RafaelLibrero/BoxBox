@@ -1,12 +1,11 @@
 ﻿using BoxBox.Helpers;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
 using Microsoft.AspNetCore.Mvc.ViewFeatures;
 
 namespace BoxBox.Filters
 {
-    public class AuthorizeUsersAttribute : AuthorizeAttribute
+    public class AuthorizeAdminAttribute : AuthorizeAttribute
         , IAuthorizationFilter
     {
         public void OnAuthorization(AuthorizationFilterContext context)
@@ -27,9 +26,9 @@ namespace BoxBox.Filters
 
             provider.SaveTempData(context.HttpContext, TempData);
 
-            if (user.Identity.IsAuthenticated == false)
+            if (user.IsInRole("2") == false )
             {
-                context.Result = HelperTools.GetRoute("Auth", "Login");
+                context.Result = HelperTools.GetRoute("Auth", "ErrorAcceso");
             }
         }
     }

@@ -2,6 +2,11 @@
 
 @{
     ViewData["Title"] = "Index";
+    List<Post> lastMessages = null;
+    @if (ViewData["LastMessages"] != null)
+    {
+        lastMessages = ViewData["LastMessages"] as List<Post>;
+    }
 }
 
 <h1>Index</h1>
@@ -52,7 +57,22 @@
                 @Html.DisplayFor(modelItem => item.Posts)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.LastMessage)
+            @{
+                if (lastMessages != null && item.LastMessage != 0)
+                    {
+                    var lastMessage = lastMessages.FirstOrDefault(m => m.PostId == item.LastMessage);
+                    if (lastMessage != null)
+                    {
+                        <p>Último mensaje: @lastMessage.Text</p>
+                        <p>Fecha: @lastMessage.CreatedAt</p>
+                    }
+                    else
+                    {
+                        <p>No hay mensajes disponibles</p>
+                    }
+                }
+            }               
+                       
             </td>
             <td>
                 <a asp-controller="Conversations" 

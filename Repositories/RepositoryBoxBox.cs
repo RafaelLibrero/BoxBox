@@ -1,6 +1,7 @@
 ﻿using BoxBox.Data;
 using BoxBox.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 
 #region Views y Stored Procedures
@@ -46,12 +47,12 @@ using Microsoft.EntityFrameworkCore;
 //    c.ConversationID, c.UserID, c.TopicID, c.Title, c.EntryCount, c.CreatedAt;
 
 //CREATE PROCEDURE SP_UPDATE_ENTRYCOUNT
-//    @ConversationID INT
+//    @conversationID INT
 //AS
 //BEGIN
 //    UPDATE Conversations
 //    SET EntryCount = EntryCount + 1
-//    WHERE ConversationID = @ConversationID;
+//    WHERE ConversationID = @conversationID;
 //END;
 
 #endregion
@@ -160,6 +161,14 @@ namespace BoxBox.Repositories
             VConversation conversation = await this.FindVConversationAsync(conversationId);
 
             this.context.VConversations.Remove(conversation);
+            await this.context.SaveChangesAsync();
+        }
+
+        public async Task UpdateEntryCount(int conversationId)
+        {
+            string sql = "SP_UPDATE_ENTRYCOUNT @conversationID";
+            SqlParameter pamId = new SqlParameter("@conversationID", conversationId);
+            await this.context.Database.ExecuteSqlRawAsync(sql, pamId);
         }
 
         #endregion
@@ -213,6 +222,7 @@ namespace BoxBox.Repositories
             Post post = await this.FindPostAsync(postId);
 
             this.context.Posts.Remove(post);
+            await this.context.SaveChangesAsync();
         }
 
         #endregion

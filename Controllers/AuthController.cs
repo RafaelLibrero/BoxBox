@@ -48,12 +48,16 @@ namespace BoxBox.Controllers
                 new ClaimsIdentity(
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     ClaimTypes.Name, ClaimTypes.Role);
-
-                //CREAMOS EL CLAIM PARA EL NOMBRE (APELLIDO) 
+ 
                 Claim claimName =
                     new Claim(ClaimTypes.Name, user.Email);
-                
                 identity.AddClaim(claimName);
+                Claim claimId =
+                    new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString());
+                identity.AddClaim(claimId);
+                Claim claimRol = 
+                    new Claim(ClaimTypes.Role, user.RolId.ToString());
+                identity.AddClaim(claimRol);
 
                 //COMO POR AHORA NO VOY A UTILIZAR NI SE UTILIZAR ROLES 
 
@@ -64,8 +68,13 @@ namespace BoxBox.Controllers
                 await HttpContext.SignInAsync(
                     CookieAuthenticationDefaults.AuthenticationScheme,
                     userPrincipal);
+
+                string controller = TempData["controller"].ToString();
+                string action = TempData["action"].ToString();
+
+
+                return RedirectToAction(action, controller);
                 //HttpContext.Session.SetObject("USUARIO", user);
-                return RedirectToAction("Index", "Topics");
 
             }
             else
@@ -81,6 +90,11 @@ namespace BoxBox.Controllers
             await HttpContext.SignOutAsync
                 (CookieAuthenticationDefaults.AuthenticationScheme);
             return RedirectToAction("Index", "Topics");
+        }
+
+        public IActionResult ErrorAcceso()
+        {
+            return View();
         }
     }
 }

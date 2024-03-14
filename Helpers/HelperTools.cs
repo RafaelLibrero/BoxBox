@@ -1,4 +1,6 @@
-﻿namespace BoxBox.Helpers
+﻿using Microsoft.AspNetCore.Mvc;
+
+namespace BoxBox.Helpers
 {
     public class HelperTools
     {
@@ -34,6 +36,17 @@
                 }
             }
             return iguales;
+        }
+
+        public static RedirectToRouteResult GetRoute
+            (string controller, string action)
+        {
+            RouteValueDictionary ruta =
+                new RouteValueDictionary(
+                    new { controller = controller, action = action });
+            RedirectToRouteResult result =
+                new RedirectToRouteResult(ruta);
+            return result;
         }
     }
 }
