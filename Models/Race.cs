@@ -11,6 +11,8 @@ namespace BoxBox.Models
         public int RaceId { get; set; }
         [Column("RaceName")]
         public string RaceName { get; set; }
+        [Column("Image")]
+        public string Image { get; set; }
         [Column("Location")]
         public string Location { get; set; }
         [Column("StartDate")]

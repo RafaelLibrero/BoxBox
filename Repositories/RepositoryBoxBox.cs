@@ -343,6 +343,7 @@ namespace BoxBox.Repositories
             Race race = new Race();
             race.RaceId = await this.context.Races.MaxAsync(x => x.RaceId) + 1;
             race.RaceName = carrera.RaceName;
+            race.Image = carrera.Image;
             race.Location = carrera.Location;
             race.StartDate = carrera.StartDate;
             race.EndDate = carrera.EndDate;
@@ -355,6 +356,7 @@ namespace BoxBox.Repositories
         {
             Race race = await this.FindRaceAsync(carrera.RaceId);
             race.RaceName = carrera.RaceName;
+            race.Image = carrera.Image;
             race.Location = carrera.Location;
             race.StartDate = carrera.StartDate;
             race.EndDate = carrera.EndDate;
