@@ -1,4 +1,5 @@
-﻿using BoxBox.Helpers;
+﻿using BoxBox.Filters;
+using BoxBox.Helpers;
 using BoxBox.Models;
 using BoxBox.Repositories;
 using Microsoft.AspNetCore.Mvc;
@@ -30,6 +31,7 @@ namespace BoxBox.Controllers
             return View(teams);
         }
 
+        [AuthorizeUsers(Policy = ("ADMIN"))]
         public IActionResult Create()
         {
             return View();
@@ -45,6 +47,14 @@ namespace BoxBox.Controllers
             await this.repo.CreateTeamAsync(team);
 
             return View();
+        }
+
+        [AuthorizeUsers(Policy = ("ADMIN"))]
+        public async Task<IActionResult> Edit (int teamId)
+        {
+            Team team = await this.repo.FindTeamAsync(teamId);
+            
+            return View(team);
         }
     }
 }
