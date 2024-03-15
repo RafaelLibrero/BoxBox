@@ -6,6 +6,12 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("ADMIN",
+        policy => policy.RequireRole("1"));
+});
+
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultSignInScheme =
@@ -14,7 +20,10 @@ builder.Services.AddAuthentication(options =>
     CookieAuthenticationDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme =
     CookieAuthenticationDefaults.AuthenticationScheme;
-}).AddCookie();
+}).AddCookie(config =>
+{
+    config.AccessDeniedPath ="/Auth/ErrorAcceso";
+});
 
 builder.Services.AddControllersWithViews
     (options => options.EnableEndpointRouting = false);

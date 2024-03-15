@@ -30,13 +30,13 @@ namespace BoxBox.Controllers
             return View(topics);
         }
 
-        [AuthorizeAdmin]
+        [AuthorizeUsers(Policy = "ADMIN")]
         public IActionResult Create()
         {
             return View();
         }
 
-        [AuthorizeAdmin]
+        [AuthorizeUsers(Policy = "ADMIN")]
         [HttpPost]
         public async Task<IActionResult>Create(VTopic topic)
         {
@@ -44,14 +44,14 @@ namespace BoxBox.Controllers
             return RedirectToAction("Index");
         }
 
-        [AuthorizeAdmin]
+        [AuthorizeUsers(Policy = "ADMIN")]
         public async Task<IActionResult> Edit(int topicId)
         {
             VTopic topic = await this.repo.FindVTopicAsync(topicId);
             return View(topic);
         }
 
-        [AuthorizeAdmin]
+        [AuthorizeUsers(Policy = "ADMIN")]
         [HttpPost]
         public async Task<IActionResult> Edit(VTopic topic)
         {
