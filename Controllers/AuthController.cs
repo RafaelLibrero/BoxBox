@@ -68,6 +68,22 @@ namespace BoxBox.Controllers
                 string controller = TempData["controller"].ToString();
                 string action = TempData["action"].ToString();
 
+                if (TempData["queryString"] != null)
+                {
+                    var queryString = TempData["queryString"].ToString();
+
+                    var queryParams = Microsoft.AspNetCore.WebUtilities.QueryHelpers.ParseQuery(queryString);
+
+                    // Crear un objeto anónimo para almacenar los parámetros
+                    var routeParams = new Dictionary<string, string>();
+                    foreach (var param in queryParams)
+                    {
+                        // Agregar cada parámetro al objeto anónimo
+                        routeParams[param.Key] = param.Value;
+                    }
+
+                    return RedirectToAction(action, controller, routeParams);
+                }
 
                 return RedirectToAction(action, controller);
                 //HttpContext.Session.SetObject("USUARIO", user);

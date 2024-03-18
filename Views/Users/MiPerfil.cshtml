@@ -1,0 +1,18 @@
+﻿﻿@using System.Security.Claims
+
+<ul class="list-group">
+    <li class="list-group-item">
+        Usuario: @Context.User.Identity.Name
+    </li>
+</ul>
+<h2>Todos los Claims</h2>
+<ul>
+    @foreach (Claim claim in Context.User.Claims)
+    {
+        <li>@claim.Type: <b>@claim.Value</b></li>
+    }
+</ul>
+
+<a asp-controller="Users" asp-action="Edit">
+    Editar
+</a>

@@ -22,8 +22,23 @@ namespace BoxBox.Controllers
         public async Task<IActionResult> Index()
         {
             List<Race> races = await this.repo.GetRacesAsync();
+            List<Driver> drivers = await this.repo.GetDriversAsync();
+            List<Team> teams = await this.repo.GetTeamsAsync();
+           
+            foreach (Team team in teams)
+            {
+                team.Logo = this.helperPathProvider.MapUrlPath(team.Logo, Folders.Images);
+            }
+            foreach (Driver driver in drivers)
+            {
+                driver.Flag = this.helperPathProvider.MapUrlPath(driver.Flag, Folders.Images);
+                driver.Imagen = this.helperPathProvider.MapUrlPath(driver.Imagen, Folders.Images);
+            }
 
-            foreach(Race race in races)
+            ViewData["DRIVERS"] = drivers;
+            ViewData["TEAMS"] = teams;
+
+            foreach (Race race in races)
             {
                 race.Image = this.helperPathProvider.MapUrlPath(race.Image, Folders.Images);
             }
@@ -60,8 +75,8 @@ namespace BoxBox.Controllers
             return View(race);
         }
 
-        [HttpPost]
         [AuthorizeUsers(Policy = "ADMIN")]
+        [HttpPost]
         public async Task<IActionResult> Edit(Race race, IFormFile image)
         {
             await this.helperUploadFiles.UploadFileAsync(image, Folders.Images);
@@ -71,6 +86,14 @@ namespace BoxBox.Controllers
             await this.repo.UpdateRaceAsync(race);
 
             return View();
+        }
+
+        [AuthorizeUsers(Policy = "ADMIN")]
+        [HttpPost]
+        public async Task<IActionResult> Delete(int raceId)
+        {
+            await this.repo.DeleteRaceAsync(raceId);
+            return RedirectToAction("Index");
         }
     }
 }

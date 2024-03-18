@@ -21,12 +21,17 @@ namespace BoxBox.Controllers
         public async Task<IActionResult> Index()
         {
             List<Driver> drivers = await this.repo.GetDriversAsync();
-
+            List<Team> teams = await this.repo.GetTeamsAsync();
             foreach(Driver driver in drivers)
             {
                 driver.Flag = this.helperPathProvider.MapUrlPath(driver.Flag, Folders.Images);
                 driver.Imagen = this.helperPathProvider.MapUrlPath(driver.Imagen, Folders.Images);
             }
+            foreach(Team team in teams)
+            {
+                team.Logo = this.helperPathProvider.MapUrlPath(team.Logo, Folders.Images);
+            }
+            ViewData["TEAMS"] = teams;
             return View(drivers);
         }
 
@@ -36,6 +41,7 @@ namespace BoxBox.Controllers
             return View();
         }
 
+        [AuthorizeUsers(Policy = ("ADMIN"))]
         [HttpPost]
         public async Task<IActionResult> Create(Driver driver, IFormFile imagen, IFormFile bandera)
         {
@@ -61,6 +67,7 @@ namespace BoxBox.Controllers
             return View();
         }
 
+        [AuthorizeUsers(Policy = "ADMIN")]
         [HttpPost]
         public async Task<IActionResult> Edit(Driver driver, IFormFile imagen, IFormFile bandera)
         {
@@ -73,6 +80,14 @@ namespace BoxBox.Controllers
             await this.repo.UpdateDriverAsync(driver);
 
             return View();
+        }
+
+        [AuthorizeUsers(Policy = "ADMIN")]
+        [HttpPost]
+        public async Task<IActionResult> Delete(int driverId)
+        {
+            await this.repo.DeleteDriverAsync(driverId);
+            return RedirectToAction("Index");
         }
     }
 }

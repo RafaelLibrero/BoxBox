@@ -19,6 +19,8 @@ namespace BoxBox.Models
         public DateTime StartDate { get; set; }
         [Column("EndDate")]
         public DateTime EndDate { get; set; }
+        [Column("WinnerDriverID")]
+        public int? WinnerDriverId { get; set; }
 
     }
 }

@@ -32,8 +32,22 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Races" asp-action="Index">Calendario</a>
                         </li>
-                        <partial name="_MenuLogin"/>
+                        @if (Context.User.IsInRole("1"))
+                        {
+                            <li class="nav-item">
+                                <a asp-controller="Posts"
+                                   asp-action="ReportedPosts"
+                                   class="nav-link">
+                                    Reportes
+                                </a>
+                            </li>
+                        }
+                        
                     </ul>
+                    <ul class="navbar-nav">
+                        <partial name="_MenuLogin" />
+                    </ul>
+                    
                 </div>
             </div>
         </nav>
@@ -47,7 +61,6 @@
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
     @await RenderSectionAsync("Scripts", required: false)
-  
 </body>
 
 <style>

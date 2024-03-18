@@ -2,6 +2,7 @@
 using BoxBox.Models;
 using BoxBox.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BoxBox.Controllers
 {
@@ -26,8 +27,19 @@ namespace BoxBox.Controllers
         }
 
         [AuthorizeUsers]
-        public async Task<IActionResult> EditPerfil(int userId)
+        public async Task<IActionResult> MiPerfil()
         {
+            List<Driver> drivers = await this.repo.GetDriversAsync();
+            List<Team> teams = await this.repo.GetTeamsAsync();
+            ViewData["DRIVERS"] = drivers;
+            ViewData["TEAMS"] = teams;
+            return View();
+        }
+
+        [AuthorizeUsers]
+        public async Task<IActionResult> EditPerfil()
+        {
+            int userId = int.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
             User user = await this.repo.FindUserAsync(userId);
             List<Driver> drivers = await this.repo.GetDriversAsync();
             List<Team> teams = await this.repo.GetTeamsAsync();

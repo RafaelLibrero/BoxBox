@@ -218,7 +218,6 @@ namespace BoxBox.Repositories
             conversation.Title = conversacion.Title;
             conversation.CreatedAt = DateTime.UtcNow;
             
-
             this.context.Conversations.Add(conversation);
             await this.context.SaveChangesAsync();
         }

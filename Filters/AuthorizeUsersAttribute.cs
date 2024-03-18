@@ -17,6 +17,8 @@ namespace BoxBox.Filters
                 context.RouteData.Values["controller"].ToString();
             string action =
                 context.RouteData.Values["action"].ToString();
+            var queryString = context.HttpContext.Request.QueryString.Value;
+
             ITempDataProvider provider =
                 context.HttpContext.RequestServices
                 .GetService<ITempDataProvider>();
@@ -24,6 +26,7 @@ namespace BoxBox.Filters
             var TempData = provider.LoadTempData(context.HttpContext);
             TempData["controller"] = controller;
             TempData["action"] = action;
+            TempData["queryString"] = queryString;
 
             provider.SaveTempData(context.HttpContext, TempData);
 

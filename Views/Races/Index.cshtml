@@ -1,65 +1,70 @@
-﻿@model IEnumerable<BoxBox.Models.Race>
+﻿@model List<Race>
 
 @{
-    ViewData["Title"] = "Index";
+    List<Driver> drivers = ViewData["DRIVERS"] as List<Driver>;
+    List<Team> teams = ViewData["TEAMS"] as List<Team>;
 }
 
-<h1>Index</h1>
+<h1>Calendario F1 2024</h1>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.RaceId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.RaceName)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Image)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Location)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.StartDate)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EndDate)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.RaceId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.RaceName)
-            </td>
-            <td>
-                <img src="@Html.DisplayFor(modelItem => item.Image)" />
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Location)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div class="row">
+    @foreach (var item in Model)
+    {
+        <div class="col-md-12 mb-3">
+            <div class="card">
+                <div class="row no-gutters">
+                    <div class="col-md-5">
+                        <div class="card-body">
+                            <h5 class="card-title">@item.RaceName</h5>
+                            <p class="card-text text-danger" style="font-size: 18px; font-weight: bold">
+                                @item.StartDate.ToString("dd")-@item.EndDate.ToString("dd 'de' MMMM").ToUpper()
+                            </p>
+                            <p class="card-text">
+                                <i class="fas fa-map-marker-alt" style="color: red; opacity: 0.7;"></i> @item.Location.ToUpper()
+                            </p>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <img src="@item.Image" class="card-img" alt="Imagen de la Carrera">
+                    </div>
+                    @{
+                        var driver = drivers?.FirstOrDefault(t => t.DriverID == item.WinnerDriverId);
+                        
+                    }
+                    @if (driver != null)
+                    {
+                        var team = teams?.FirstOrDefault(t => t.TeamId == driver.TeamID);
+                        <div class="col-md-4 text-center">
+                            <h5 class="card-title">
+                                Ganador: @driver.DriverName
+                                <img src="@driver.Flag" class="card-img" alt="Bandera" style="width: auto; height: 25px; object-fit: contain;">
+                            </h5>
+                            <div class="row align-items-center justify-content-center">
+                                <div class="col-md-2">
+                                    <h4 class="card-text" style="white-space: nowrap;">@driver.CarNumber</h4>
+                                </div>
+                                <div class="col-md-3">
+                                    <img src="@driver.Imagen" class="card-img" alt="Driver Image" style="width: auto; height: 75px; object-fit: contain;" />
+                                </div>
+                            </div>
+                        
+                        <br/>
+                        @if (team != null)
+                        {
+                            <div class="row align-items-center justify-content-center">
+                                <div class="col-md-3">
+                                    <h6 class="card-text" style="white-space: nowrap;">@team.TeamName</h6>
+                                </div>
+                                <div class="col-md-2 text-right">
+                                    <img src="@team.Logo" class="card-img" alt="Team Image" style="width: auto; height: 25px; object-fit: contain;" />
+                                </div>
+                            </div>
+                        }
+                        </div>
+                        }
+                        
+                </div>
+            </div>
+        </div>
+    }
+</div>
