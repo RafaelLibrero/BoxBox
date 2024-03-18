@@ -1,86 +1,170 @@
-﻿@model IEnumerable<BoxBox.Models.Post>
+﻿@model List<Post>
 
 @{
-    ViewData["Title"] = "Index";
-    List<User> usuarios = null;
-    @if (ViewData["Usuarios"] != null)
-    {
-        usuarios = ViewData["Usuarios"] as List<User>;
-    }
+    List<User> usuarios = ViewData["Usuarios"] as List<User>;
+    List<Driver> drivers = ViewData["DRIVERS"] as List<Driver>;
+    List<Team> teams = ViewData["TEAMS"] as List<Team>;
 }
 
-<h1>Index</h1>
+<div class="forum-container">
+    <div class="forum-header">
+        <h1>@ViewData["Title"]</h1>
+        <a asp-action="Create" class="btn btn-primary">Crear Nuevo Post</a>
+    </div>
 
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.PostId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ConversationId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Text)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
+    <div>
+        <ul class="list-group list-group-horizontal">
+            <li class="list-group-item">
+                <a asp-controller="Posts"
+                   asp-action="Index"
+                   asp-route-posicion="1"
+                   asp-route-conversationId="@ViewData["CONVERSATIONID"]">
+                    1
+                </a>
+            </li>
+            @if (ViewData["ANTERIOR"] == ViewData["POSICION"])
+            {
+                <li class="list-group-item">
+                    <a asp-controller="Posts"
+                       asp-action="Index"
+                       asp-route-posicion="@ViewData["ANTERIOR"]"
+                       asp-route-conversationId="@ViewData["CONVERSATIONID"]">
+                        @ViewData["ANTERIOR"]
+                    </a>
+                </li>
+            }
+            @if (ViewData["SIGUIENTE"] == ViewData["POSICION"])
+            {
+                <li class="list-group-item">
+                    <a asp-controller="Posts"
+                       asp-action="Index"
+                       asp-route-posicion="@ViewData["SIGUIENTE"]"
+                       asp-route-conversationId="@ViewData["CONVERSATIONID"]">
+                        @ViewData["SIGUIENTE"]
+                    </a>
+                </li>
+            }
+            @if (ViewData["ULTIMO"] == ViewData["POSICION"])
+            {
+                <li class="list-group-item">
+                    <a asp-controller="Posts"
+                       asp-action="Index"
+                       asp-route-posicion="@ViewData["ULTIMO"]"
+                       asp-route-conversationId="@ViewData["CONVERSATIONID"]">
+                        @ViewData["ULTIMO"]
+                    </a>
+                </li>
+            }
+
+        </ul>
+    </div>
+
+    <div class="post-list">
         @foreach (var item in Model)
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.PostId)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.ConversationId)
-                </td>
-                <td>
+            <div class="post-item">
+                <div class="post-meta">
                     @{
-                        if (usuarios != null && item.UserId != 0)
+                        var usuario = usuarios?.FirstOrDefault(u => u.UserId == item.UserId);
+                        if (usuario != null)
                         {
-                            var usuario = usuarios.FirstOrDefault(m => m.UserId == item.UserId);
-                            if (usuario != null)
-                            {
-                                <p>@usuario.UserName</p>
-                                <p>Fecha: @usuario.RegistrationDate</p>
-                            }
-                            else
-                            {
-                                <p>No hay mensajes disponibles</p>
-                            }
+                            <h3 class="small">@usuario.UserName</h3>
+                            <div class="driver-team">
+                                @if (usuario.DriverId != null)
+                                {
+                                    var driver = drivers?.FirstOrDefault(d => d.DriverID == usuario.DriverId);
+                                    <p>@driver.DriverName Fan</p>
+                                }
+                                @if (usuario.TeamId != null)
+                                {
+                                    var team = teams?.FirstOrDefault(t => t.TeamId == usuario.TeamId);
+                                    <p>@team.TeamName Fan</p>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <span>Usuario desconocido</span>
                         }
                     }
-
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Title)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Text)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.CreatedAt)
-                </td>
-                <td>
-                    @Html.ActionLink("Edit", "Edit", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Details", "Details", new { /* id=item.PrimaryKey */ }) |
-                    @Html.ActionLink("Delete", "Delete", new { /* id=item.PrimaryKey */ })
-                </td>
-            </tr>
+                </div>
+                <div class="post-separator"></div>
+                <div class="post-footer">
+                    <div class="post-date">@item.CreatedAt.ToString("dd/MM/yyyy")</div>
+                    <form method="post" class="post-actions" asp-controller="Posts" asp-action="ReportPost" asp-route-postId="@item.PostId">
+                        <button type="submit" class="btn btn-outline-danger btn-sm"
+                           onclick="return confirm('¿Estás seguro de que deseas reportar este post?')">
+                            <i class="fas fa-flag"></i>
+                        </button>
+                    </form>
+                </div>
+                <div class="post-content">
+                    <p>@item.Text</p>
+                </div>
+                
+            </div>
         }
-    </tbody>
-</table>
+    </div>
+</div>
+
+<style>
+    .forum-container {
+        margin: 20px;
+    }
+
+    .forum-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .post-list {
+        display: grid;
+        grid-gap: 20px;
+    }
+
+    .post-item {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 5px;
+    }
+
+    .small {
+        font-size: 14px;
+        margin-bottom: 5px;
+    }
+
+    .post-meta {
+        margin-bottom: 10px;
+    }
+
+    .driver-team {
+        display: flex;
+        align-items: center;
+    }
+
+        .driver-team p {
+            margin-right: 10px;
+        }
+
+    .post-separator {
+        border-bottom: 1px solid #ccc;
+        margin: 10px 0;
+    }
+
+    .post-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: #888;
+    }
+
+    .post-actions {
+        margin-top: 10px;
+    }
+
+        .post-actions .btn {
+            margin-right: 10px;
+        }
+</style>

@@ -37,6 +37,7 @@ namespace BoxBox.Controllers
             return View();
         }
 
+        [AuthorizeUsers(Policy = "ADMIN")]
         [HttpPost]
         public async Task<IActionResult> Create(Team team, IFormFile logo)
         {
@@ -55,6 +56,16 @@ namespace BoxBox.Controllers
             Team team = await this.repo.FindTeamAsync(teamId);
             
             return View(team);
+        }
+
+        [AuthorizeUsers(Policy = ("ADMIN"))]
+        [HttpPost]
+        public async Task<IActionResult> Edit(Team team, IFormFile logo)
+        {
+            await this.helperUploadFiles.UploadFileAsync(logo, Folders.Images);
+            team.Logo = logo.FileName;
+            await this.repo.UpdateTeamAsync(team);
+            return View();
         }
     }
 }

@@ -3,6 +3,7 @@ using BoxBox.Models;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using System.Data;
 
 #region Views y Stored Procedures
 
@@ -55,6 +56,50 @@ using Microsoft.EntityFrameworkCore;
 //    WHERE ConversationID = @conversationID;
 //END;
 
+/*
+CREATE OR ALTER PROCEDURE SP_PAGINACION_CONVERSATIONS
+(@POSICION INT, @IDTOPIC INT, @REGISTROS INT OUT)
+AS
+	SELECT @REGISTROS = COUNT(ConversationID)
+	FROM V_Conversations
+	WHERE TopicID = @IDTOPIC
+	SELECT ConversationID, TopicID, UserID, Title, EntryCount, CreatedAt, PostCount, LastMessage
+	FROM
+	(
+		SELECT CAST(ROW_NUMBER() OVER (ORDER BY ConversationID) AS int)
+		AS POSICION, ConversationID, TopicID, UserID, Title, EntryCount, CreatedAt, PostCount, LastMessage
+		FROM V_Conversations
+		WHERE TopicID = @IDTOPIC
+	)
+	AS QUERY
+	where posicion >= @posicion and posicion < (@posicion + 10)
+GO
+*/
+
+#endregion
+
+#region Posts
+
+/*
+CREATE OR ALTER PROCEDURE SP_PAGINACION_POSTS
+(@POSICION INT, @IDCONVERSACION INT, @REGISTROS INT OUT)
+AS
+	SELECT @REGISTROS = COUNT(PostID)
+	FROM Posts
+	WHERE ConversationID = @IDCONVERSACION
+	SELECT PostID, ConversationID, UserID, Text, CreatedAt, Estado
+	FROM
+	(
+		SELECT CAST(ROW_NUMBER() OVER (ORDER BY PostID) AS int)
+		AS POSICION, PostID, ConversationID, UserID, Text, CreatedAt, Estado
+		FROM Posts
+		WHERE ConversationID = @IDCONVERSACION
+	)
+	AS QUERY
+	where posicion >= @posicion and posicion < (@posicion + 10)
+GO
+*/
+
 #endregion
 
 #endregion
@@ -78,6 +123,18 @@ namespace BoxBox.Repositories
                 (x => x.UserId == userId);
         }
 
+        public async Task UpdateUserAsync(User user)
+        {
+            User usuario = await this.context.Users.FirstOrDefaultAsync
+                (x => x.UserId == user.UserId);
+            usuario.UserName = user.UserName;
+            usuario.ProfilePicture = user.ProfilePicture;
+            usuario.TeamId = user.TeamId;
+            usuario.DriverId = user.DriverId;
+
+            await this.context.SaveChangesAsync();
+        }
+
         #endregion
 
         #region Topics
@@ -88,30 +145,37 @@ namespace BoxBox.Repositories
                 this.context.VTopics.ToListAsync();
         }
 
-        public async Task<VTopic> FindVTopicAsync(int topicId)
+        public async Task<Topic> FindTopicAsync(int topicId)
         {
             return await
-                this.context.VTopics.FirstOrDefaultAsync
+                this.context.Topics.FirstOrDefaultAsync
                 (x => x.TopicId == topicId);
         }
 
-        public async Task CreateVTopicAsync(VTopic tema)
+        public async Task CreateTopicAsync(Topic tema)
         {
-            VTopic topic = new VTopic();
+            Topic topic = new Topic();
             topic.TopicId = await this.context.VTopics.MaxAsync(x => x.TopicId) + 1;
             topic.Title = tema.Title;
             topic.Description = tema.Description;
 
-            this.context.VTopics.Add(topic);
+            this.context.Topics.Add(topic);
             await this.context.SaveChangesAsync();
         }
 
-        public async Task UpdateVTopicAsync(VTopic tema)
+        public async Task UpdateTopicAsync(Topic tema)
         {
-            VTopic topic = await this.FindVTopicAsync(tema.TopicId);
+            Topic topic = await this.FindTopicAsync(tema.TopicId);
             topic.Title = tema.Title;
             topic.Description = tema.Description;
 
+            await this.context.SaveChangesAsync();
+        }
+
+        public async Task DeleteTopicAsync(int topicId)
+        {
+            Topic topic = await this.FindTopicAsync(topicId);
+            this.context.Topics.Remove(topic);
             await this.context.SaveChangesAsync();
         }
 
@@ -119,48 +183,60 @@ namespace BoxBox.Repositories
 
         #region Conversations
 
-        public async Task<List<VConversation>> GetVConversationsTopicAsync(int topicId)
+        public async Task<ConversationsPaginado> GetVConversationsTopicAsync(int posicion, int topicId)
         {
-            return await
-                this.context.VConversations.Where
-                (x => x.TopicId == topicId).ToListAsync();
+            string sql = "SP_PAGINACION_CONVERSATIONS @posicion, @idtopic, @registros out";
+            SqlParameter pamPosicion = new SqlParameter("@posicion", posicion);
+            SqlParameter pamTopicId = new SqlParameter("@idtopic", topicId);
+            SqlParameter pamRegistros = new SqlParameter("@registros", -1);
+            pamRegistros.Direction = ParameterDirection.Output;
+
+            var consulta = this.context.VConversations.FromSqlRaw
+                (sql, pamPosicion, pamTopicId, pamRegistros);
+            var datos = await consulta.ToListAsync();
+
+            return new ConversationsPaginado
+            {
+                Registros = (int)pamRegistros.Value,
+                Conversations = datos
+            };
         }
 
-        public async Task<VConversation> FindVConversationAsync(int conversationId)
+        public async Task<Conversation> FindConversationAsync(int conversationId)
         {
             return await
-                this.context.VConversations.FirstOrDefaultAsync
+                this.context.Conversations.FirstOrDefaultAsync
                 (x => x.ConversationId == conversationId);
         }
 
-        public async Task CreateVConversationAsync(VConversation conversacion)
+        public async Task CreateConversationAsync(Conversation conversacion)
         {
-            VConversation conversation = new VConversation();
+            Conversation conversation = new Conversation();
             conversation.ConversationId = await this.context.Conversations.MaxAsync(x => x.ConversationId) + 1;
             conversation.TopicId = conversacion.TopicId;
             conversation.UserId = conversacion.UserId;
             conversation.Title = conversacion.Title;
-            conversation.CreatedAt = conversation.CreatedAt;
+            conversation.CreatedAt = DateTime.UtcNow;
+            
 
-            this.context.VConversations.Add(conversation);
+            this.context.Conversations.Add(conversation);
             await this.context.SaveChangesAsync();
         }
 
-        public async Task UpdateVConversationAsync(VConversation conversacion)
+        public async Task UpdateConversationAsync(Conversation conversacion)
         {
-            VConversation conversation = await this.FindVConversationAsync(conversacion.ConversationId);
-            conversation.TopicId = conversacion.TopicId;
-            conversation.UserId = conversacion.UserId;
+            Conversation conversation = await this.FindConversationAsync(conversacion.ConversationId);
+            
             conversation.Title = conversacion.Title;
 
             await this.context.SaveChangesAsync();
         }
 
-        public async Task DeleteVConversationAsync(int conversationId)
+        public async Task DeleteConversationAsync(int conversationId)
         {
-            VConversation conversation = await this.FindVConversationAsync(conversationId);
+            Conversation conversation = await this.FindConversationAsync(conversationId);
 
-            this.context.VConversations.Remove(conversation);
+            this.context.Conversations.Remove(conversation);
             await this.context.SaveChangesAsync();
         }
 
@@ -175,12 +251,23 @@ namespace BoxBox.Repositories
 
         #region Posts
 
-        public async Task<List<Post>> GetPostsConversationAsync(int conversationId)
+        public async Task<PostsPaginado> GetPostsConversationAsync(int posicion, int conversationId)
         {
-            return await
-                this.context.Posts.Where
-                (x => x.ConversationId == conversationId)
-                .ToListAsync();
+            string sql = "SP_PAGINACION_POSTS @posicion, @idconversacion, @registros out";
+            SqlParameter pamPosicion = new SqlParameter("@posicion", posicion);
+            SqlParameter pamConversationId = new SqlParameter("@idconversacion", conversationId);
+            SqlParameter pamRegistros = new SqlParameter("@registros", -1);
+            pamRegistros.Direction = ParameterDirection.Output;
+
+            var consulta = this.context.Posts.FromSqlRaw
+                (sql, pamPosicion, pamConversationId, pamRegistros);
+            var datos = await consulta.ToListAsync();
+
+            return new PostsPaginado
+            {
+                Registros = (int)pamRegistros.Value,
+                Posts = datos
+            };
         }
 
         public async Task<Post> FindPostAsync(int postId)
@@ -196,9 +283,9 @@ namespace BoxBox.Repositories
             post.PostId = await this.context.Posts.MaxAsync(x => x.PostId) + 1;
             post.ConversationId = posteo.ConversationId;
             post.UserId = posteo.UserId;
-            post.Title = posteo.Title;
             post.Text = posteo.Text;
-            post.CreatedAt = posteo.CreatedAt;
+            post.CreatedAt = DateTime.UtcNow;
+            post.Estado = 0;
 
             this.context.Posts.Add(post);
             await this.context.SaveChangesAsync();
@@ -209,9 +296,7 @@ namespace BoxBox.Repositories
             Post post = await this.FindPostAsync(posteo.PostId);
             post.ConversationId = posteo.ConversationId;
             post.UserId = posteo.UserId;
-            post.Title = posteo.Title;
             post.Text = posteo.Text;
-            post.CreatedAt = posteo.CreatedAt;
 
             this.context.Posts.Add(post);
             await this.context.SaveChangesAsync();
@@ -222,6 +307,21 @@ namespace BoxBox.Repositories
             Post post = await this.FindPostAsync(postId);
 
             this.context.Posts.Remove(post);
+            await this.context.SaveChangesAsync();
+        }
+
+        public async Task<List<Post>> GetReportedPosts()
+        {
+            return await
+                this.context.Posts
+                .Where(x => x.Estado == 1).ToListAsync();
+        }
+
+        public async Task ReportPostAsync(int postId)
+        {
+            Post post = await this.FindPostAsync(postId);
+            post.Estado = 1;
+
             await this.context.SaveChangesAsync();
         }
 

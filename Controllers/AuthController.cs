@@ -59,10 +59,6 @@ namespace BoxBox.Controllers
                     new Claim(ClaimTypes.Role, user.RolId.ToString());
                 identity.AddClaim(claimRol);
 
-                //COMO POR AHORA NO VOY A UTILIZAR NI SE UTILIZAR ROLES 
-
-                //NO LO INCLUIMOS 
-
                 ClaimsPrincipal userPrincipal =
                     new ClaimsPrincipal(identity);
                 await HttpContext.SignInAsync(

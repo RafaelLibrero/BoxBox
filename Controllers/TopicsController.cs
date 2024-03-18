@@ -19,14 +19,28 @@ namespace BoxBox.Controllers
             List<VTopic> topics = await this.repo.GetVTopicsAsync();
             
             List<Post> lastMessages = new List<Post>();
+            List<User> usuarios = new List<User>();
 
             foreach (var topic in topics)
             {
                 Post lastMessage = await this.repo.FindPostAsync(topic.LastMessage);
-                lastMessages.Add(lastMessage);
+                if (lastMessage != null)
+                {
+                    lastMessages.Add(lastMessage);
+                }
+            }
+
+            foreach (var lastMessage in lastMessages)
+            {
+                User usuario = await this.repo.FindUserAsync(lastMessage.UserId);
+                if (usuario != null)
+                {
+                    usuarios.Add(usuario);
+                }  
             }
             
             ViewData["LastMessages"] = lastMessages;
+            ViewData["Usuarios"] = usuarios;
             return View(topics);
         }
 
@@ -38,25 +52,34 @@ namespace BoxBox.Controllers
 
         [AuthorizeUsers(Policy = "ADMIN")]
         [HttpPost]
-        public async Task<IActionResult>Create(VTopic topic)
+        public async Task<IActionResult>Create(Topic topic)
         {
-            await this.repo.CreateVTopicAsync(topic);
+            await this.repo.CreateTopicAsync(topic);
             return RedirectToAction("Index");
         }
 
         [AuthorizeUsers(Policy = "ADMIN")]
         public async Task<IActionResult> Edit(int topicId)
         {
-            VTopic topic = await this.repo.FindVTopicAsync(topicId);
+            Topic topic = await this.repo.FindTopicAsync(topicId);
             return View(topic);
         }
 
         [AuthorizeUsers(Policy = "ADMIN")]
         [HttpPost]
-        public async Task<IActionResult> Edit(VTopic topic)
+        public async Task<IActionResult> Edit(Topic topic)
         {
-            await this.repo.UpdateVTopicAsync(topic);
+            await this.repo.UpdateTopicAsync(topic);
             return RedirectToAction("Index");
         }
+
+        [AuthorizeUsers(Policy = "ADMIN")]
+        [HttpPost]
+        public async Task<IActionResult> Delete(int topicId)
+        {
+            await this.repo.DeleteTopicAsync(topicId);
+            return RedirectToAction("Index");
+        }
+
     }
 }

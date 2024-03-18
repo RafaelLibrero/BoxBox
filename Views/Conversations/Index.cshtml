@@ -1,7 +1,6 @@
-﻿@model IEnumerable<BoxBox.Models.VConversation>
+﻿@model List<VConversation>
 
 @{
-    ViewData["Title"] = "Index";
     List<Post> lastMessages = null;
     @if (ViewData["LastMessages"] != null)
     {
@@ -14,106 +13,136 @@
     }
 }
 
-<h1>Index</h1>
+<h1>@ViewData["Title"]</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create" asp-route-topicId="@ViewData["TOPICID"]">Create New</a>
 </p>
-<table class="table">
+
+<div>
+    <ul class="list-group list-group-horizontal">
+        <li class="list-group-item">
+            <a asp-controller="Conversations"
+               asp-action="Index"
+               asp-route-posicion="1"
+               asp-route-topicId="@ViewData["TOPICID"]">
+                1
+            </a>
+        </li>
+        @if (ViewData["ANTERIOR"] == ViewData["POSICION"])
+        {
+            <li class="list-group-item">
+                <a asp-controller="Conversations"
+                   asp-action="Index"
+                   asp-route-posicion="@ViewData["ANTERIOR"]"
+                   asp-route-topicId="@ViewData["TOPICID"]">
+                    @ViewData["ANTERIOR"]
+                </a>
+            </li>
+        }
+        @if (ViewData["SIGUIENTE"] == ViewData["POSICION"])
+        {
+            <li class="list-group-item">
+                <a asp-controller="Conversations"
+                   asp-action="Index"
+                   asp-route-posicion="@ViewData["SIGUIENTE"]"
+                   asp-route-topicId="@ViewData["TOPICID"]">
+                    @ViewData["SIGUIENTE"]
+                </a>
+            </li>
+        }
+        @if (ViewData["ULTIMO"] == ViewData["POSICION"])
+        {
+            <li class="list-group-item">
+                <a asp-controller="Conversations"
+                   asp-action="Index"
+                   asp-route-posicion="@ViewData["ULTIMO"]"
+                   asp-route-topicId="@ViewData["TOPICID"]">
+                    @ViewData["ULTIMO"]
+                </a>
+            </li>
+        }
+
+    </ul>
+</div>
+
+<table class="table table-bordered">
     <thead>
         <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.ConversationId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.TopicId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.UserId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.EntryCount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedAt)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.PostCount)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastMessage)
-            </th>
-            <th></th>
+            <th>Temas</th>
+            <th style="text-align: center">Respuestas</th>
+            <th style="text-align: center">Vistas</th>
+            <th style="text-align: center">Último mensaje</th>
         </tr>
     </thead>
     <tbody>
 @foreach (var item in Model) {
         <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ConversationId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TopicId)
-            </td>
-                <td>
-                    @{
-                        if (usuarios != null && item.UserId != 0)
-                        {
-                            var usuario = usuarios.FirstOrDefault(m => m.UserId == item.UserId);
-                            if (usuario != null)
-                            {
-                                <p>@usuario.UserName</p>
-                                <p>Fecha: @usuario.RegistrationDate</p>
-                            }
-                            else
-                            {
-                                <p>No hay mensajes disponibles</p>
-                            }
-                        }
-                    }
-
-                </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EntryCount)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedAt)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.PostCount)
-            </td>
-                <td>
-                    @{
-                        if (lastMessages != null && item.LastMessage != 0)
-                        {
-                            var lastMessage = lastMessages.FirstOrDefault(m => m.PostId == item.LastMessage);
-                            if (lastMessage != null)
-                            {
-                                <p>Último mensaje: @lastMessage.Text</p>
-                                <p>Fecha: @lastMessage.CreatedAt</p>
-                            }
-                            else
-                            {
-                                <p>No hay mensajes disponibles</p>
-                            }
-                        }
-                    }
-
-                </td>
-            <td>
+            <td class="col-md-8">
                 <a asp-controller="Posts"
                     asp-action="Index"
                     asp-route-conversationId="@item.ConversationId">
-                    Detalles
+                    <strong>@item.Title</strong>
                 </a>
+                @if (Context.User.IsInRole("1") == true)
+                {
+                    <div class="btn-group" role="group" aria-label="Acciones">
+                        <a asp-controller="Conversations" asp-action="Edit" asp-route-conversationId="@item.ConversationId" class="btn btn-outline-primary btn-sm" style="margin-right: 5px;">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                        <form asp-controller="Conversations" asp-action="Delete" asp-route-topicId="@item.TopicId" method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este tema?');">
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </div>
+                }
+                <br/>
+                
+                 @{ 
+                 var usuarioConversacion = usuarios.FirstOrDefault(m => m.UserId == item.UserId);
+                 if (usuarioConversacion != null)
+                     {
+                        <p style="font-size: smaller"><a asp-controller="Users" 
+                            asp-action="Perfil" 
+                            asp-route-userId="@usuarioConversacion.UserId">
+                            @usuarioConversacion.UserName</a>,
+                            @item.CreatedAt.ToString("dd/MM/yyyy HH:mm")
+                            </p>
+                     }
+                 }
+                 
+            </td>
+            <td style="text-align: center">@item.PostCount</td>
+            <td style="text-align: center">@item.EntryCount</td>
+            <td style="vertical-align: top; text-align: right">
+                @if (lastMessages != null && item.LastMessage != 0)
+                {
+                    var lastMessage = lastMessages.FirstOrDefault(m => m.PostId == item.LastMessage);
+                    if (lastMessage != null)
+                    {
+                        var usuario = usuarios.FirstOrDefault(m => m.UserId == lastMessage.UserId);
+                        <p style="margin-bottom: 2px"><strong>@Truncate(lastMessage.Text, 30)</strong></p>
+                        <p style="font-size: smaller; margin-bottom: 2px;">@lastMessage.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                        <p style="font-size: smaller; margin-bottom: 0;">
+                            por <a asp-controller="Users" asp-action="Perfil" asp-route-userId="@usuario.UserId">@usuario.UserName</a>
+                        </p>
+
+                    }
+                }
             </td>
         </tr>
 }
     </tbody>
 </table>
+
+<script>
+    @functions {
+        public string Truncate(string value, int maxLength)
+        {
+            if (string.IsNullOrEmpty(value)) return value;
+            return value.Length <= maxLength ? value : value.Substring(0, maxLength) + "...";
+        }
+    }
+
+</script>

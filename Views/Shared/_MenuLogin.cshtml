@@ -1,4 +1,16 @@
-﻿﻿@if (Context.User.Identity.IsAuthenticated == false)
+﻿﻿@using System.Security.Claims
+
+@if (Context.User.IsInRole("1")) {
+    <li class="nav-link">
+        <a asp-controller="Posts"
+            asp-action="ReportedPosts"
+            class="nav-link">
+            Reportes
+        </a>
+    </li>
+}
+
+﻿@if (Context.User.Identity.IsAuthenticated == false)
 {
     //EL USUARIO NO ESTA AUTENTICADO, POR LO QUE 
     //LE LLEVAMOS A CUALQUIER VISTA PROTEGIDA QUE, 

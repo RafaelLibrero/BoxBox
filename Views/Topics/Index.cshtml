@@ -1,87 +1,94 @@
-﻿@model IEnumerable<BoxBox.Models.VTopic>
+﻿@model List<VTopic>
 
 @{
     ViewData["Title"] = "Index";
-    List<Post> lastMessages = null;
-    @if (ViewData["LastMessages"] != null)
-    {
-        lastMessages = ViewData["LastMessages"] as List<Post>;
+    List<Post> lastMessages = ViewData["LastMessages"] as List<Post>;
+    List<User> usuarios = ViewData["Usuarios"] as List<User>;
+}
+
+<h1>BoxBox - Foros</h1>
+
+@if (Context.User.IsInRole("1") == true)
+{
+    <p>
+        <a asp-action="Create" class="btn btn-primary">Crear Nuevo Foro</a>
+    </p>
+}
+
+<div>
+    <table class="table table-bordered">
+        <thead class="thead thead-dark">
+            <tr>
+                <th>Foro</th>
+                <th style="text-align: center">Temas</th>
+                <th style="text-align: center">Mensajes</th>
+                <th style="text-align: center">Último mensaje</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                
+                <tr>
+                    <td>
+                        <h5><a asp-controller="Conversations" 
+                            asp-action="Index" 
+                            asp-route-topicId="@item.TopicId">
+                            <strong>@item.Title</strong> 
+                            </a>
+                            @if (Context.User.IsInRole("1") == true)
+                            {
+                                <div class="btn-group" role="group" aria-label="Acciones">
+                                    <a asp-controller="Topics" asp-action="Edit" asp-route-topicId="@item.TopicId" class="btn btn-outline-primary btn-sm" style="margin-right: 5px;">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    <form asp-controller="Topics" asp-action="Delete" asp-route-topicId="@item.TopicId" method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este tema?');">
+                                        <button type="submit" class="btn btn-outline-danger btn-sm">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            }
+
+
+                        </h5>
+                        <p>@item.Description</p>
+                    </td>
+                    <td style="text-align: center">@item.Conversations</td>
+                    <td style="text-align: center">@item.Posts</td>
+                    <td style="vertical-align: top; text-align: right">
+                        @if (lastMessages != null && item.LastMessage != 0)
+                        {
+                            var lastMessage = lastMessages.FirstOrDefault(m => m.PostId == item.LastMessage);
+                            if (lastMessage != null)
+                            {
+                                var usuario = usuarios.FirstOrDefault(m => m.UserId == lastMessage.UserId);
+                                <p style="margin-bottom: 2px"><strong>@Truncate(lastMessage.Text, 30)</strong></p>
+                                <p style="font-size: smaller; margin-bottom: 2px;">@lastMessage.CreatedAt.ToString("dd/MM/yyyy HH:mm")</p>
+                                <p style="font-size: smaller; margin-bottom: 0;">
+                                    por <a asp-controller="Users" asp-action="Perfil" asp-route-userId="@usuario.UserId">@usuario.UserName</a>
+                                </p>
+                                
+                            }
+                        }
+                    </td>
+                    <td style="text-align: center">
+                        
+                    </td>
+
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+<script>
+    @functions {
+        public string Truncate(string value, int maxLength)
+        {
+            if (string.IsNullOrEmpty(value)) return value;
+            return value.Length <= maxLength ? value : value.Substring(0, maxLength) + "...";
+        }
     }
-}
 
-<h1>Index</h1>
-
-<p>
-    <a asp-action="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.TopicId)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Conversations)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Posts)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.LastMessage)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.TopicId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Conversations)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Posts)
-            </td>
-            <td>
-            @{
-                if (lastMessages != null && item.LastMessage != 0)
-                    {
-                    var lastMessage = lastMessages.FirstOrDefault(m => m.PostId == item.LastMessage);
-                    if (lastMessage != null)
-                    {
-                        <p>Último mensaje: @lastMessage.Text</p>
-                        <p>Fecha: @lastMessage.CreatedAt</p>
-                    }
-                    else
-                    {
-                        <p>No hay mensajes disponibles</p>
-                    }
-                }
-            }               
-                       
-            </td>
-            <td>
-                <a asp-controller="Conversations" 
-                asp-action="Index"
-                asp-route-topicId="@item.TopicId">
-                Detalles
-            </a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+</script>

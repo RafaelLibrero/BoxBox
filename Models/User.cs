@@ -28,6 +28,10 @@ namespace BoxBox.Models
         public string ProfilePicture { get; set; }
         [Column("TotalPosts")]
         public int TotalPosts { get; set; }
+        [Column("TeamID")]
+        public int TeamId { get; set; }
+        [Column("DriverID")]
+        public int DriverId { get; set; }
         [Column("Salt")]
         public string Salt { get; set; }
         [Column("Estado")]

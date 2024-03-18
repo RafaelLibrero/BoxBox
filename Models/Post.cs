@@ -13,12 +13,12 @@ namespace BoxBox.Models
         public int ConversationId { get; set; }
         [Column("UserID")]
         public int UserId { get; set; }
-        [Column("Title")]
-        public string Title { get; set; }
         [Column("Text")]
         public string Text { get; set; }
         [Column("CreatedAt")]
         public DateTime CreatedAt { get; set; }
+        [Column("Estado")]
+        public int Estado { get; set; }
 
     }
 }

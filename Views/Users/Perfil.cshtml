@@ -1,8 +1,4 @@
-﻿@model BoxBox.Models.User
-
-@{
-    ViewData["Title"] = "Perfil";
-}
+﻿@model User
 
 <h1>Perfil</h1>
 
@@ -10,12 +6,6 @@
     <h4>User</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.UserId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.UserId)
-        </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.UserName)
         </dt>
@@ -27,12 +17,6 @@
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Email)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Password)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Password)
         </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.RegistrationDate)
@@ -47,12 +31,6 @@
             @Html.DisplayFor(model => model.LastAccess)
         </dd>
         <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.RolId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.RolId)
-        </dd>
-        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.ProfilePicture)
         </dt>
         <dd class = "col-sm-10">
@@ -63,18 +41,6 @@
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.TotalPosts)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Salt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Salt)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Estado)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Estado)
         </dd>
     </dl>
 </div>

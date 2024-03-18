@@ -38,6 +38,7 @@ namespace BoxBox.Repositories
         {
             User user = await
                 this.context.Users.FirstOrDefaultAsync(x => x.Email == email);
+            
             if (user == null)
             {
                 return null;
@@ -52,6 +53,8 @@ namespace BoxBox.Repositories
                     HelperTools.CompareArrays(temp, passUser);
                 if (response == true)
                 {
+                    user.LastAccess = DateTime.UtcNow;
+                    await this.context.SaveChangesAsync();
                     return user;
                 }
                 else
@@ -59,6 +62,8 @@ namespace BoxBox.Repositories
                     return null;
                 }
             }
+
+            
         }
     }
 }
