@@ -39,6 +39,7 @@ namespace BoxBox.Controllers
         {
             List<Driver> drivers = await this.repo.GetDriversAsync();
             List<Team> teams = await this.repo.GetTeamsAsync();
+            ViewData["ProfilePicture"] = this.helperPathProvider.MapUrlPath(HttpContext.User.FindFirstValue("FotoPerfil"), Folders.Uploads);
             ViewData["DRIVERS"] = drivers;
             ViewData["TEAMS"] = teams;
             return View();

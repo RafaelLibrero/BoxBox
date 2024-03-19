@@ -49,7 +49,7 @@
             </li>
             <li class="list-group-item d-flex justify-content-between align-items-center">
                 <strong>Foto de Perfil:</strong>
-                <span><img src="@Context.User.FindFirstValue("FotoPerfil")" alt="Foto de Perfil" style="max-width: 100px; max-height: 100px;"></span>
+                <span><img src="@ViewData["ProfilePicture"]" alt="Foto de Perfil" style="max-width: 100px; max-height: 100px;"></span>
             </li>
         </ul>
     </div>
