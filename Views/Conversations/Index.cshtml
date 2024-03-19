@@ -11,6 +11,11 @@
     {
         usuarios = ViewData["Usuarios"] as List<User>;
     }
+    List<User> users = null;
+    @if (ViewData["Usuarios"] != null)
+    {
+        users = ViewData["UsuariosConversation"] as List<User>;
+    }
 }
 
 <div class="row mb-3">
@@ -106,7 +111,7 @@
                 <br/>
                 
                  @{ 
-                 var usuarioConversacion = usuarios.FirstOrDefault(m => m.UserId == item.UserId);
+                 var usuarioConversacion = users.FirstOrDefault(m => m.UserId == item.UserId);
                  if (usuarioConversacion != null)
                      {
                         <p style="font-size: smaller"><a asp-controller="Users" 

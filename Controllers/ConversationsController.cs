@@ -26,6 +26,7 @@ namespace BoxBox.Controllers
             ConversationsPaginado conversations = await this.repo.GetVConversationsTopicAsync(posicion.Value, topicId);
             Topic topic = await this.repo.FindTopicAsync(topicId);
             List<User> users = new List<User>();
+            List<User> usuarios = new List<User>();
             List<Post> lastMessages = new List<Post>();
             ViewData["REGISTROS"] = conversations.Registros;
             int siguiente = posicion.Value + 1;
@@ -51,8 +52,18 @@ namespace BoxBox.Controllers
                 Post lastMessage = await this.repo.FindPostAsync(conversation.LastMessage);
                 lastMessages.Add(lastMessage);
             }
+
+            foreach (var lastMessage in lastMessages)
+            {
+                User usuario = await this.repo.FindUserAsync(lastMessage.UserId);
+                if (usuario != null)
+                {
+                    usuarios.Add(usuario);
+                }  
+            }
             ViewData["Title"] = topic.Title;
-            ViewData["Usuarios"] = users;
+            ViewData["UsuariosConversation"] = users;
+            ViewData["Usuarios"] = usuarios;
             ViewData["LastMessages"] = lastMessages;
 
             HttpContext.Session.SetString("fromConversations", "true");
