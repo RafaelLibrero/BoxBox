@@ -12,6 +12,53 @@
         <a asp-action="Create" asp-route-conversationId="@ViewData["CONVERSATIONID"]" class="btn btn-primary">Responder</a>
     </div>
 
+    <div>
+        <ul class="list-group list-group-horizontal">
+            <li class="list-group-item">
+                <a asp-controller="Posts"
+                   asp-action="Index"
+                   asp-route-posicion="1"
+                   asp-route-conversationId="@ViewData["CONVERSATIONID"]">
+                    1
+                </a>
+            </li>
+            @if (ViewData["ANTERIOR"] == ViewData["POSICION"])
+            {
+                <li class="list-group-item">
+                    <a asp-controller="Posts"
+                       asp-action="Index"
+                       asp-route-posicion="@ViewData["ANTERIOR"]"
+                       asp-route-conversationId="@ViewData["CONVERSATIONID"]">
+                        @ViewData["ANTERIOR"]
+                    </a>
+                </li>
+            }
+            @if (ViewData["SIGUIENTE"] == ViewData["POSICION"])
+            {
+                <li class="list-group-item">
+                    <a asp-controller="Posts"
+                       asp-action="Index"
+                       asp-route-posicion="@ViewData["SIGUIENTE"]"
+                       asp-route-conversationId="@ViewData["CONVERSATIONID"]">
+                        @ViewData["SIGUIENTE"]
+                    </a>
+                </li>
+            }
+            @if (ViewData["ULTIMO"] == ViewData["POSICION"])
+            {
+                <li class="list-group-item">
+                    <a asp-controller="Posts"
+                       asp-action="Index"
+                       asp-route-posicion="@ViewData["ULTIMO"]"
+                       asp-route-conversationId="@ViewData["CONVERSATIONID"]">
+                        @ViewData["ULTIMO"]
+                    </a>
+                </li>
+            }
+
+        </ul>
+    </div>
+
     <div class="forum-body">
         <div class="forum-content">
             @foreach (var post in Model)
@@ -24,7 +71,7 @@
                             {
                                 <div class="post-meta d-flex align-items-center">
                                     <div class="profile-picture">
-                                        <img src="@ViewData["ProfilePicture"]" alt="Profile Picture" class="img-fluid">
+                                        <img src="@usuario.ProfilePicture" alt="Profile Picture" class="img-fluid">
                                     </div>
                                     <div class="user-info">
                                         <a asp-controller="Users" asp-action="Perfil" asp-route-userId="@usuario.UserId">

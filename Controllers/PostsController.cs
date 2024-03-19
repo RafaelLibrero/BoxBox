@@ -42,7 +42,6 @@ namespace BoxBox.Controllers
             ViewData["ANTERIOR"] = anterior;
             ViewData["POSICION"] = posicion;
             ViewData["CONVERSATIONID"] = conversationId;
-            ViewData["ProfilePicture"] = this.helperPathProvider.MapUrlPath(HttpContext.User.FindFirstValue("FotoPerfil"), Folders.Uploads);
             List<Driver> drivers = await this.repo.GetDriversAsync();
             List<Team> teams = await this.repo.GetTeamsAsync();
             Conversation conversation = await this.repo.FindConversationAsync(conversationId);
@@ -54,6 +53,7 @@ namespace BoxBox.Controllers
             foreach (var post in posts.Posts)
             {
                 User usuario = await this.repo.FindUserAsync(post.UserId);
+                usuario.ProfilePicture = this.helperPathProvider.MapUrlPath(usuario.ProfilePicture, Folders.Uploads);
                 users.Add(usuario);
             }
             ViewData["Usuarios"] = users;
