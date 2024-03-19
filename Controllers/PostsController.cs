@@ -63,8 +63,9 @@ namespace BoxBox.Controllers
         }
 
         [AuthorizeUsers]
-        public IActionResult Create()
+        public IActionResult Create(int conversationId)
         {
+            ViewData["ConversationId"] = conversationId;
             return View();
         }
 

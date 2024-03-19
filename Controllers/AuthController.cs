@@ -1,6 +1,4 @@
-﻿using BoxBox.Extensions;
-using BoxBox.Helpers;
-using BoxBox.Models;
+﻿using BoxBox.Models;
 using BoxBox.Repositories;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication;
@@ -50,14 +48,32 @@ namespace BoxBox.Controllers
                     ClaimTypes.Name, ClaimTypes.Role);
  
                 Claim claimName =
-                    new Claim(ClaimTypes.Name, user.Email);
+                    new Claim(ClaimTypes.Name, user.UserName);
                 identity.AddClaim(claimName);
+                Claim claimEmail =
+                    new Claim(ClaimTypes.Email, user.Email);
+                identity.AddClaim(claimEmail);
                 Claim claimId =
                     new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString());
                 identity.AddClaim(claimId);
                 Claim claimRol = 
                     new Claim(ClaimTypes.Role, user.RolId.ToString());
                 identity.AddClaim(claimRol);
+                Claim claimEquipoFavorito =
+                    new Claim("EquipoFavorito", user.TeamId.ToString());
+                identity.AddClaim(claimEquipoFavorito);
+                Claim claimPilotoFavorito =
+                    new Claim("PilotoFavorito", user.DriverId.ToString());
+                identity.AddClaim(claimPilotoFavorito);
+                Claim claimFechaRegistro =
+                    new Claim("FechaRegistro", user.RegistrationDate.ToString());
+                identity.AddClaim(claimFechaRegistro);
+                Claim claimUltimoAcceso =
+                    new Claim("UltimoAcceso", user.LastAccess.ToString());
+                identity.AddClaim(claimUltimoAcceso);
+                Claim claimFotoPerfil =
+                    new Claim("FotoPerfil", user.ProfilePicture);
+                identity.AddClaim(claimFotoPerfil);
 
                 ClaimsPrincipal userPrincipal =
                     new ClaimsPrincipal(identity);

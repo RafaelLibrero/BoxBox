@@ -6,14 +6,19 @@
     List<User> usuarios = ViewData["Usuarios"] as List<User>;
 }
 
-<h1>BoxBox - Foros</h1>
-
-@if (Context.User.IsInRole("1") == true)
-{
-    <p>
-        <a asp-action="Create" class="btn btn-primary">Crear Nuevo Foro</a>
-    </p>
-}
+<div class="row mb-3">
+    <div class="col-md-10">
+        <h1>BoxBox</h1>
+    </div>
+    @if (Context.User.IsInRole("1") == true)
+    {
+        <div class="col-md-2 text-right align-self-center">
+            <a asp-action="Create" class="btn btn-success btn-lg">
+                <i class="fas fa-plus-circle"></i> Nueva Sección
+            </a>
+        </div>
+    }
+</div>
 
 <div>
     <table class="table table-bordered">
@@ -72,10 +77,6 @@
                             }
                         }
                     </td>
-                    <td style="text-align: center">
-                        
-                    </td>
-
                 </tr>
             }
         </tbody>

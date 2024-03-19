@@ -9,7 +9,7 @@
 <div class="forum-container">
     <div class="forum-header">
         <h1>@ViewData["Title"]</h1>
-        <a asp-action="Create" class="btn btn-primary">Crear Nuevo Post</a>
+        <a asp-action="Create" asp-route-conversationId ="@ViewData["CONVERSATIONID"]" class="btn btn-primary">Responder</a>
     </div>
 
     <div>

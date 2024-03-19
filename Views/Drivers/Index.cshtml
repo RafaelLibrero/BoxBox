@@ -4,7 +4,19 @@
     List<Team> teams = ViewData["TEAMS"] as List<Team>;
 }
 
-<h1>Pilotos F1 2024</h1>
+<div class="row mb-3">
+    <div class="col-md-10">
+        <h1>Pilotos F1 2024</h1>
+    </div>
+    @if (Context.User.IsInRole("1") == true)
+    {
+        <div class="col-md-2 text-right align-self-center">
+            <a asp-action="Create" class="btn btn-success btn-lg">
+                <i class="fas fa-plus-circle"></i> Nuevo Piloto
+            </a>
+        </div>
+    }
+</div>
 
 <div class="row">
     @foreach (var item in Model)
@@ -15,6 +27,7 @@
                     <h5 class="card-title">
                         @item.DriverName
                         <img src="@item.Flag" class="card-img" alt="Bandera" style="width: auto; height: 25px; object-fit: contain;">
+                        
                     </h5>
                     <div class="row align-items-center">
                         <div class="col-md-2 text-center">
@@ -23,6 +36,7 @@
                         <div class="col-md-10">
                             <img src="@item.Imagen" class="card-img" alt="Driver Image" style="width: auto; height: 100px; object-fit: contain;" />
                         </div>
+                        
                     </div>
                     <br/>
                     @{
@@ -39,9 +53,22 @@
                             </div>
                         </div>
                     }
+
+                    @if (Context.User.IsInRole("1") == true)
+                    {
+                        <div class="btn-group" role="group" aria-label="Acciones">
+                            <a asp-controller="Drivers" asp-action="Edit" asp-route-driverId="@item.DriverID" class="btn btn-outline-primary btn-sm" style="margin-right: 5px;">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form asp-controller="Drivers" asp-action="Delete" asp-route-driverId="@item.DriverID" method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este piloto?');">
+                                <button type="submit" class="btn btn-outline-danger btn-sm">
+                                    <i class="fas fa-trash-alt"></i>
+                                </button>
+                            </form>
+                        </div>
+                    }
                 </div>
             </div>
         </div>
     }
 </div>
-

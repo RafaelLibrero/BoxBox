@@ -25,7 +25,6 @@ namespace BoxBox.Repositories
             user.RegistrationDate = DateTime.Today;
             user.LastAccess = DateTime.UtcNow;
             user.RolId = 2;
-            user.Estado = 0;
             user.ProfilePicture = "";
 
             this.context.Users.Add(user);

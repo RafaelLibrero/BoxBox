@@ -47,45 +47,51 @@ namespace BoxBox.Controllers
         }
 
         [AuthorizeUsers(Policy = "ADMIN")]
-        public IActionResult Create()
+        public async Task<IActionResult> Create()
         {
+            List<Driver> drivers = await this.repo.GetDriversAsync();
+            ViewData["DRIVERS"] = drivers;
             return View();
         }
 
         [AuthorizeUsers(Policy = "ADMIN")]
         [HttpPost]
-        public async Task<IActionResult> Create(Race race, IFormFile image)
+        public async Task<IActionResult> Create(Race race, IFormFile circuit)
         {
-            await this.helperUploadFiles.UploadFileAsync(image, Folders.Images);
+            await this.helperUploadFiles.UploadFileAsync(circuit, Folders.Images);
 
-            race.Image = image.FileName;
+            race.Image = circuit.FileName;
 
             await this.repo.CreateRaceAsync(race);
 
-            return View();
+            return RedirectToAction("Index");
         }
 
         [AuthorizeUsers(Policy = "ADMIN")]
         public async Task<IActionResult> Edit(int raceId)
         {
             Race race = await this.repo.FindRaceAsync(raceId);
+            List<Driver> drivers = await this.repo.GetDriversAsync();
+            ViewData["DRIVERS"] = drivers;
 
-            race.Image = this.helperPathProvider.MapUrlPath(race.Image, Folders.Images);
+            ViewData["CIRCUIT"] = this.helperPathProvider.MapUrlPath(race.Image, Folders.Images);
 
             return View(race);
         }
 
         [AuthorizeUsers(Policy = "ADMIN")]
         [HttpPost]
-        public async Task<IActionResult> Edit(Race race, IFormFile image)
+        public async Task<IActionResult> Edit(Race race, IFormFile circuit)
         {
-            await this.helperUploadFiles.UploadFileAsync(image, Folders.Images);
-
-            race.Image = image.FileName;
-
+            if (circuit != null)
+            {
+                await this.helperUploadFiles.UploadFileAsync(circuit, Folders.Images);
+                race.Image = circuit.FileName;
+            }
+            
             await this.repo.UpdateRaceAsync(race);
 
-            return View();
+            return RedirectToAction("Index");
         }
 
         [AuthorizeUsers(Policy = "ADMIN")]

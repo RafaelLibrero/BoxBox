@@ -34,8 +34,6 @@ namespace BoxBox.Models
         public int DriverId { get; set; }
         [Column("Salt")]
         public string Salt { get; set; }
-        [Column("Estado")]
-        public int Estado { get; set; }
 
     }
 }

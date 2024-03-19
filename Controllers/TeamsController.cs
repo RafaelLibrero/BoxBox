@@ -44,15 +44,15 @@ namespace BoxBox.Controllers
 
         [AuthorizeUsers(Policy = "ADMIN")]
         [HttpPost]
-        public async Task<IActionResult> Create(Team team, IFormFile logo)
+        public async Task<IActionResult> Create(Team team, IFormFile imagen)
         {
-            await this.helperUploadFiles.UploadFileAsync(logo, Folders.Images);
+            await this.helperUploadFiles.UploadFileAsync(imagen, Folders.Images);
 
-            team.Logo = logo.FileName;
+            team.Logo = imagen.FileName;
 
             await this.repo.CreateTeamAsync(team);
 
-            return View();
+            return RedirectToAction("Index");
         }
 
         [AuthorizeUsers(Policy = ("ADMIN"))]
@@ -60,19 +60,22 @@ namespace BoxBox.Controllers
         {
             Team team = await this.repo.FindTeamAsync(teamId);
 
-            team.Logo = this.helperPathProvider.MapUrlPath(team.Logo, Folders.Images);
+            ViewData["LOGO"] = this.helperPathProvider.MapUrlPath(team.Logo, Folders.Images);
 
             return View(team);
         }
 
         [AuthorizeUsers(Policy = ("ADMIN"))]
         [HttpPost]
-        public async Task<IActionResult> Edit(Team team, IFormFile logo)
+        public async Task<IActionResult> Edit(Team team, IFormFile imagen)
         {
-            await this.helperUploadFiles.UploadFileAsync(logo, Folders.Images);
-            team.Logo = logo.FileName;
+            if (imagen != null)
+            {
+                await this.helperUploadFiles.UploadFileAsync(imagen, Folders.Images);
+                team.Logo = imagen.FileName;
+            }
             await this.repo.UpdateTeamAsync(team);
-            return View();
+            return RedirectToAction("Index");
         }
 
         [HttpPost]
