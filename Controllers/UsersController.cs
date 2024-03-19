@@ -13,17 +13,20 @@ namespace BoxBox.Controllers
     {
         private RepositoryBoxBox repo;
         private HelperUploadFiles helperUploadFiles;
+        private HelperPathProvider helperPathProvider;
 
-        public UsersController(RepositoryBoxBox repo, HelperUploadFiles helperUploadFiles)
+        public UsersController(RepositoryBoxBox repo, HelperUploadFiles helperUploadFiles, HelperPathProvider helperPathProvider)
         {
             this.repo = repo;
             this.helperUploadFiles = helperUploadFiles;
+            this.helperPathProvider = helperPathProvider;
         }
 
         [AuthorizeUsers]
         public async Task<IActionResult> Perfil(int userId)
         {
             User user = await this.repo.FindUserAsync(userId);
+            user.ProfilePicture = this.helperPathProvider.MapUrlPath(user.ProfilePicture, Folders.Uploads);
             List<Driver> drivers = await this.repo.GetDriversAsync();
             List<Team> teams = await this.repo.GetTeamsAsync();
             ViewData["DRIVERS"] = drivers;
@@ -46,6 +49,8 @@ namespace BoxBox.Controllers
         {
             int userId = int.Parse(HttpContext.User.FindFirstValue(ClaimTypes.NameIdentifier));
             User user = await this.repo.FindUserAsync(userId);
+
+            user.ProfilePicture = this.helperPathProvider.MapUrlPath(user.ProfilePicture, Folders.Uploads);
             List<Driver> drivers = await this.repo.GetDriversAsync();
             List<Team> teams = await this.repo.GetTeamsAsync();
             ViewData["DRIVERS"] = drivers;

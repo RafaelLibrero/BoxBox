@@ -10,7 +10,7 @@
 <div class="card mb-4">
     <div class="card-body">
         <h5 class="card-title">Información del Usuario</h5>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <ul class="list-group">
                 <input type="hidden" name="UserID" value="@Context.User.FindFirstValue(ClaimTypes.NameIdentifier)" />
                 <li class="list-group-item">
@@ -42,7 +42,7 @@
                 <li class="list-group-item">
                     <strong>Foto de Perfil:</strong>
                     <img src="@Context.User.FindFirstValue("FotoPerfil")" alt="" style="max-width: 100px; max-height: 100px;" />
-                    <input type="file" name="foto" class="form-control-file" value="@Context.User.FindFirstValue("FotoPerfil")" readonly />
+                    <input type="file" name="foto" class="form-control-file" />
                     <span class="text-danger"></span>
                 </li>
                 <input type="hidden" name="ProfilePicture" value="@Context.User.FindFirstValue("FotoPerfil")" />

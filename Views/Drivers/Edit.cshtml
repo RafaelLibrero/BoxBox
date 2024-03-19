@@ -32,14 +32,14 @@
             <br />
             <div class="form-group">
                 <label class="control-label">Bandera</label>
-                <img src="@ViewData["BANDERA"]" />
+                <img src="@ViewData["BANDERA"]" style="max-width: 100px; max-height: 100px" />
                 <input type="file" name="bandera" class="form-control-file" value="@Model.Flag" readonly />
                 <span class="text-danger"></span>
             </div>
             <input asp-for="Flag" value="@Model.Flag" type="hidden"/> 
             <div class="form-group">
                 <label class="control-label">Imagen</label>
-                <img src="@ViewData["FOTO"]" />
+                <img src="@ViewData["FOTO"]" style="max-width: 100px; max-height: 100px" />
                 <input type="file" name="foto" class="form-control-file" value="@Model.Imagen" readonly />
                 <span class="text-danger"></span>
             </div>
