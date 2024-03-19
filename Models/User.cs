@@ -29,9 +29,9 @@ namespace BoxBox.Models
         [Column("TotalPosts")]
         public int TotalPosts { get; set; }
         [Column("TeamID")]
-        public int TeamId { get; set; }
+        public int? TeamId { get; set; }
         [Column("DriverID")]
-        public int DriverId { get; set; }
+        public int? DriverId { get; set; }
         [Column("Salt")]
         public string Salt { get; set; }
 

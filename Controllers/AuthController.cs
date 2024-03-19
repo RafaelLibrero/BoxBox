@@ -26,7 +26,7 @@ namespace BoxBox.Controllers
         {
             User user = await this.repo.Register(userName, email, password);
 
-            return View();
+            return RedirectToAction("Login");
         }
 
         public IActionResult Login()

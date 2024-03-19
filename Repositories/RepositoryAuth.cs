@@ -26,6 +26,8 @@ namespace BoxBox.Repositories
             user.LastAccess = DateTime.UtcNow;
             user.RolId = 2;
             user.ProfilePicture = "";
+            user.DriverId = null;
+            user.TeamId = null;
 
             this.context.Users.Add(user);
             await this.context.SaveChangesAsync();
