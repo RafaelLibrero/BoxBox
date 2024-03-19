@@ -2,7 +2,6 @@
 using BoxBox.Models;
 using BoxBox.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Hosting;
 
 namespace BoxBox.Controllers
 {
@@ -55,11 +54,15 @@ namespace BoxBox.Controllers
 
             foreach (var lastMessage in lastMessages)
             {
-                User usuario = await this.repo.FindUserAsync(lastMessage.UserId);
-                if (usuario != null)
+                if (lastMessage != null)
                 {
-                    usuarios.Add(usuario);
-                }  
+                    User usuario = await this.repo.FindUserAsync(lastMessage.UserId);
+                    if (usuario != null)
+                    {
+                        usuarios.Add(usuario);
+                    }
+                }
+                
             }
             ViewData["Title"] = topic.Title;
             ViewData["UsuariosConversation"] = users;
@@ -82,9 +85,9 @@ namespace BoxBox.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(Conversation conversation)
         { 
-            await this.repo.CreateConversationAsync(conversation);
+            Conversation conversacion = await this.repo.CreateConversationAsync(conversation);
 
-            return RedirectToAction("Index", new { topicId = conversation.TopicId });
+            return RedirectToAction("Create", "Posts" , new { conversationId = conversacion.ConversationId });
         }
 
         [AuthorizeUsers(Policy = "ADMIN")]
@@ -106,8 +109,8 @@ namespace BoxBox.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete (int conversationId)
         {
-            await this.repo.DeleteConversationAsync(conversationId);
             Conversation conversation = await this.repo.FindConversationAsync(conversationId);
+            await this.repo.DeleteConversationAsync(conversationId);
             return RedirectToAction("Index", new { topicId = conversation.TopicId });
         }
     }

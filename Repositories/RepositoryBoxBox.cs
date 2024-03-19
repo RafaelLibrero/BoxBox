@@ -209,7 +209,7 @@ namespace BoxBox.Repositories
                 (x => x.ConversationId == conversationId);
         }
 
-        public async Task CreateConversationAsync(Conversation conversacion)
+        public async Task<Conversation> CreateConversationAsync(Conversation conversacion)
         {
             Conversation conversation = new Conversation();
             conversation.ConversationId = await this.context.Conversations.MaxAsync(x => x.ConversationId) + 1;
@@ -220,6 +220,8 @@ namespace BoxBox.Repositories
             
             this.context.Conversations.Add(conversation);
             await this.context.SaveChangesAsync();
+
+            return conversation;
         }
 
         public async Task UpdateConversationAsync(Conversation conversacion)

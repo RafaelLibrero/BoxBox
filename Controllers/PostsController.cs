@@ -87,8 +87,8 @@ namespace BoxBox.Controllers
         [HttpPost]
         public async Task<IActionResult> Delete(int postId)
         {
-            await this.repo.DeleteConversationAsync(postId);
             Post post = await this.repo.FindPostAsync(postId);
+            await this.repo.DeleteConversationAsync(postId);
             return RedirectToAction("Index", new { conversationId = post.ConversationId });
         }
 

@@ -12,7 +12,7 @@
         usuarios = ViewData["Usuarios"] as List<User>;
     }
     List<User> users = null;
-    @if (ViewData["Usuarios"] != null)
+    @if (ViewData["UsuariosConversation"] != null)
     {
         users = ViewData["UsuariosConversation"] as List<User>;
     }
@@ -101,7 +101,7 @@
                         <a asp-controller="Conversations" asp-action="Edit" asp-route-conversationId="@item.ConversationId" class="btn btn-outline-primary btn-sm" style="margin-right: 5px;">
                             <i class="fas fa-edit"></i>
                         </a>
-                        <form asp-controller="Conversations" asp-action="Delete" asp-route-topicId="@item.TopicId" method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este tema?');">
+                        <form asp-controller="Conversations" asp-action="Delete" asp-route-conversationId="@item.ConversationId" method="post" onsubmit="return confirm('¿Estás seguro de que deseas eliminar este tema?');">
                             <button type="submit" class="btn btn-outline-danger btn-sm">
                                 <i class="fas fa-trash-alt"></i>
                             </button>
