@@ -16,15 +16,22 @@
         <div class="forum-content">
             @foreach (var post in Model)
             {
-                <div class="forum-post" id="post-@post.PostId">
+                <div class="forum-post" id="@post.PostId">
                     <div class="post-meta">
                         @{
                             var usuario = usuarios?.FirstOrDefault(u => u.UserId == post.UserId);
                             if (usuario != null)
                             {
-                                <a asp-controller="Users" asp-action="Perfil" asp-route-userId="@usuario.UserId">
-                                    <h3>@usuario.UserName</h3>
-                                </a>
+                                <div class="post-meta d-flex align-items-center">
+                                    <div class="profile-picture">
+                                        <img src="@ViewData["ProfilePicture"]" alt="Profile Picture" class="img-fluid">
+                                    </div>
+                                    <div class="user-info">
+                                        <a asp-controller="Users" asp-action="Perfil" asp-route-userId="@usuario.UserId">
+                                            <h3>@usuario.UserName</h3>
+                                        </a>
+                                    </div>
+                                </div>
                             }
                             else
                             {
@@ -40,7 +47,7 @@
                     <div class="post-actions">
                         <form method="post" asp-controller="Posts" asp-action="ReportPost" asp-route-postId="@post.PostId">
                             <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('¿Estás seguro de que deseas reportar este post?')">
-                                <i class="fas fa-flag"></i> Reportar
+                                <i class="fas fa-flag"></i>
                             </button>
                         </form>
                     </div>
@@ -101,6 +108,20 @@
         justify-content: space-between;
         align-items: center;
         margin-bottom: 10px;
+    }
+
+    .profile-picture {
+        width: 100px; 
+        height: 100px; 
+        overflow: hidden;
+        margin-right: 10px;
+    }
+
+    .profile-picture img{
+        width: 100%;
+        height: auto;
+        border-radius: 50%;
+        object-fit: cover;
     }
 
     .post-date {

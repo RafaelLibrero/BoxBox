@@ -1,17 +1,21 @@
 ﻿using BoxBox.Filters;
+using BoxBox.Helpers;
 using BoxBox.Models;
 using BoxBox.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 
 namespace BoxBox.Controllers
 {
     public class PostsController : Controller
     {
         private RepositoryBoxBox repo;
+        private HelperPathProvider helperPathProvider;
 
-        public PostsController(RepositoryBoxBox repo)
+        public PostsController(RepositoryBoxBox repo, HelperPathProvider helperPathProvider)
         {
             this.repo = repo;
+            this.helperPathProvider = helperPathProvider;
         }
 
         public async Task<IActionResult>Index(int? posicion, int conversationId)
@@ -38,6 +42,7 @@ namespace BoxBox.Controllers
             ViewData["ANTERIOR"] = anterior;
             ViewData["POSICION"] = posicion;
             ViewData["CONVERSATIONID"] = conversationId;
+            ViewData["ProfilePicture"] = this.helperPathProvider.MapUrlPath(HttpContext.User.FindFirstValue("FotoPerfil"), Folders.Uploads);
             List<Driver> drivers = await this.repo.GetDriversAsync();
             List<Team> teams = await this.repo.GetTeamsAsync();
             Conversation conversation = await this.repo.FindConversationAsync(conversationId);

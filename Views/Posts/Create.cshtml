@@ -8,15 +8,15 @@
     <div class="col-md-6">
         <form asp-action="Create" class="needs-validation" novalidate>
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Text" class="control-label">Título</label>
-                <input asp-for="Text" class="form-control" required />
+            <div class="form-group mb-2">
+                <label asp-for="Text"  class="control-label">Título</label>
+                <textarea asp-for="Text" class="form-control" required cols="5" rows="3"></textarea>
                 <span asp-validation-for="Text" class="text-danger"></span>
             </div>
             <input type="hidden" name="conversationId" value="@ViewData["ConversationId"]" />
             <input type="hidden" name="userId" value="@Context.User.FindFirstValue(ClaimTypes.NameIdentifier)" />
             <div class="form-group">
-                <button type="submit" class="btn btn-primary">Crear</button>
+                <button type="submit" class="btn btn-primary">Responder</button>
             </div>
         </form>
     </div>
