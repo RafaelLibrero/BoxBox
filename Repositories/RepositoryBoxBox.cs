@@ -106,7 +106,7 @@ GO
 
 namespace BoxBox.Repositories
 {
-    public class RepositoryBoxBox
+    public class RepositoryBoxBox : IRepositoryBoxBox
     {
         private BoxBoxContext context { get; set; }
 
@@ -217,7 +217,7 @@ namespace BoxBox.Repositories
             conversation.UserId = conversacion.UserId;
             conversation.Title = conversacion.Title;
             conversation.CreatedAt = DateTime.UtcNow;
-            
+
             this.context.Conversations.Add(conversation);
             await this.context.SaveChangesAsync();
 
@@ -227,7 +227,7 @@ namespace BoxBox.Repositories
         public async Task UpdateConversationAsync(Conversation conversacion)
         {
             Conversation conversation = await this.FindConversationAsync(conversacion.ConversationId);
-            
+
             conversation.Title = conversacion.Title;
 
             await this.context.SaveChangesAsync();
@@ -389,12 +389,12 @@ namespace BoxBox.Repositories
 
         public async Task<Team> FindTeamAsync(int teamId)
         {
-            return await 
+            return await
                 this.context.Teams.FirstOrDefaultAsync
                 (x => x.TeamId == teamId);
         }
 
-        public async Task CreateTeamAsync (Team equipo)
+        public async Task CreateTeamAsync(Team equipo)
         {
             Team team = new Team();
             team.TeamId = await this.context.Teams.MaxAsync(x => x.TeamId) + 1;
@@ -405,7 +405,7 @@ namespace BoxBox.Repositories
             await this.context.SaveChangesAsync();
         }
 
-        public async Task UpdateTeamAsync (Team equipo)
+        public async Task UpdateTeamAsync(Team equipo)
         {
             Team team = await this.FindTeamAsync(equipo.TeamId);
             team.TeamName = equipo.TeamName;
@@ -439,7 +439,7 @@ namespace BoxBox.Repositories
                 (x => x.RaceId == raceId);
         }
 
-        public async Task CreateRaceAsync (Race carrera)
+        public async Task CreateRaceAsync(Race carrera)
         {
             Race race = new Race();
             race.RaceId = await this.context.Races.MaxAsync(x => x.RaceId) + 1;
@@ -453,7 +453,7 @@ namespace BoxBox.Repositories
             await this.context.SaveChangesAsync();
         }
 
-        public async Task UpdateRaceAsync (Race carrera)
+        public async Task UpdateRaceAsync(Race carrera)
         {
             Race race = await this.FindRaceAsync(carrera.RaceId);
             race.RaceName = carrera.RaceName;
@@ -465,7 +465,7 @@ namespace BoxBox.Repositories
             await this.context.SaveChangesAsync();
         }
 
-        public async Task DeleteRaceAsync (int raceId)
+        public async Task DeleteRaceAsync(int raceId)
         {
             Race race = await this.FindRaceAsync(raceId);
 

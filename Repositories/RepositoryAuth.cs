@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace BoxBox.Repositories
 {
-    public class RepositoryAuth
+    public class RepositoryAuth : IRepositoryAuth
     {
         private BoxBoxContext context;
 
@@ -39,7 +39,7 @@ namespace BoxBox.Repositories
         {
             User user = await
                 this.context.Users.FirstOrDefaultAsync(x => x.Email == email);
-            
+
             if (user == null)
             {
                 return null;
@@ -64,7 +64,7 @@ namespace BoxBox.Repositories
                 }
             }
 
-            
+
         }
     }
 }
